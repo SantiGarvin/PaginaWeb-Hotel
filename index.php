@@ -15,7 +15,7 @@ $enlace2 = "";
 $permisosDeUsuarioactual = false; 
 
 $opc = 0;
-if (isset($_GET["p"]) && ($_GET["p"] >= 0 || $_GET["p"] <= 3)) {
+if (isset($_GET["p"]) && ($_GET["p"] >= 0 || $_GET["p"] <= 4)) {
     $opc = $_GET['p'];
 }
 
@@ -41,7 +41,7 @@ $cuerpo = match ($opc) {
     1 => HTMLhabitaciones(),
     2 => HTMLservicios(),
     3 => HTMLreservations(),
-    4 => HTMLregistro(),
+    4 => HTMLregistro()
 };
 
 echo <<<HTML
