@@ -1,0 +1,8 @@
+body {
+    display: flex;
+}
+footer {
+	background-color: AntiqueWhite;
+	text-align: center;
+	color: brown;
+}
