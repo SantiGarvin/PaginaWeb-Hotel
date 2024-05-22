@@ -1,5 +1,10 @@
 <?php
-//Definimos la función HTMLfooter con los parámetros $autor, $enlaceDocumentacion y $enlaceRestauracion
+/**
+ * Generar el pie de página de la página.
+ *  $autor : Es un string con el nombre del autor o autores.
+ * $enlaceDocumentacion : Es un string con la URL del documento PDF de la documentación.
+ * $enlaceRestauracion : Es un string con la URL del fichero de datos para restaurar la BBDD.
+ */
 function HTMLfooter($autor, $enlaceDocumentacion, $enlaceRestauracion) {
     echo <<< HTML
     <footer>
