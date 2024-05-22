@@ -20,8 +20,8 @@ function HTMLnavegacion($opciones,$activo,$activoclass) {
     </nav>
     HTML;
   }
-?>
 
+/*
 <nav class="navbar">
     <ul class="navbar__list">
         <li class="navbar__item index--item"><a class="navbar__link" href="index.html">Inicio</a></li>
@@ -31,3 +31,7 @@ function HTMLnavegacion($opciones,$activo,$activoclass) {
         <li class="navbar__item"><a class="navbar__link" href="registro.html">Registro</a></li>
     </ul>
 </nav>
+*/
+?>
+
+
