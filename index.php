@@ -36,23 +36,13 @@ $header = HTMLheader();
 $menu = HTMLnavegacion($menu, $opc, 'activo');
 $footer = HTMLfooter($Diego, $enlace, $enlace2);
 
-switch ($opc) {
-    case 0:
-        $cuerpo = HTMLpag_inicio();
-        break;
-    case 1:
-        $cuerpo = HTMLhabitaciones();
-        break;
-    case 2:
-        $cuerpo = HTMLservicios();
-        break;
-    case 3:
-        $cuerpo = HTMLreservations();
-        break;
-    case 4:
-        $cuerpo = HTMLregistro();
-        break;
-}
+$cuerpo = match ($opc) {
+    0 => HTMLpag_inicio(),
+    1 => HTMLhabitaciones(),
+    2 => HTMLservicios(),
+    3 => HTMLreservations(),
+    4 => HTMLregistro(),
+};
 
 echo <<<HTML
 <!DOCTYPE html>
