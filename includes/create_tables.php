@@ -11,10 +11,10 @@ function ejecutarSQLArchivo($conn, $archivo) {
             if ($result = $conn->store_result()) {
                 $result->free();
             }
-            // If there are more result-sets, the print a divider
-            if ($conn->more_results()) {
-                printf("-----------------\n");
-            }
+            // // If there are more result-sets, then print a divider
+            // if ($conn->more_results()) {
+            //     printf("-----------------\n");
+            // }
         } while ($conn->more_results() && $conn->next_result());
     } else {
         echo "Error al ejecutar el archivo $archivo: " . $conn->error;
@@ -23,11 +23,7 @@ function ejecutarSQLArchivo($conn, $archivo) {
 
 // Listado de archivos SQL
 $sqlFiles = [
-    '../sql/usuarios.sql',
-    '../sql/habitaciones.sql',
-    '../sql/fotografias.sql',
-    '../sql/reservas.sql',
-    '../sql/logs.sql'
+    '../sql/tablas.sql'
 ];
 
 // Ejecutar cada archivo SQL
