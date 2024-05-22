@@ -5,6 +5,7 @@ require 'includes/nav.php';
 require 'inicio.php';
 require 'room.php';
 require 'servicios.php';
+require 'reservations.php';
 
 // Variables con los datos del autor y los enlaces
 $Diego = "Diego Sánchez Vargas y Santiago Garvin Pérez";
@@ -12,14 +13,15 @@ $enlace = ".";
 $enlace2 = "";
 
 $opc = 0;
-if (isset($_GET["p"]) && ($_GET["p"] >= 0 || $_GET["p"] <= 2)) {
+if (isset($_GET["p"]) && ($_GET["p"] >= 0 || $_GET["p"] <= 3)) {
     $opc = $_GET['p'];
 }
 
 $menu = [
     ['Inicio', 'index.php?p=0'],
     ['Habitaciones', 'index.php?p=1'],
-    ['Servicio', 'index.php?p=2']
+    ['Servicio', 'index.php?p=2'],
+    ['RecepcionistaSOLO', 'index.php?p=3']
 ];
 
 $head = HTMLhead("Proyecto Final", ["css/styles.css"]);
@@ -36,6 +38,9 @@ switch ($opc) {
         break;
     case 2:
         $cuerpo = HTMLservicios();
+        break;
+    case 3:
+        $cuerpo = HTMLreservations();
         break;
 }
 
