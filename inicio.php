@@ -9,14 +9,14 @@ function HTMLpag_inicio() {
                         atardeceres inolvidables con el emblemático palacio nazarí como telón de fondo.</p>
                 <p>Disfrute de nuestras habitaciones amplias y luminosas, equipadas con todo el confort para una estancia
                         perfecta.</p>
-                <img src="../img/hotel_fachada.jpg" alt="Fachada del Hotel Granada View" width="900">
+                <img src="img/hotel_fachada.jpg" alt="Fachada del Hotel Granada View" width="900">
         </section>
 
         <section class="galeria">
                 <h2>Galería de imágenes</h2>
                 <ul>
-                        <li><img src="../img/piscina.jpg" alt="Piscina" width="500" height="350"></li>
-                        <li><img src="../img/restaurante.jpg" alt="Restaurante" width="500" height="350"></li>
+                        <li><img src="img/piscina.jpg" alt="Piscina" width="500" height="350"></li>
+                        <li><img src="img/restaurante.jpg" alt="Restaurante" width="500" height="350"></li>
                 </ul>
         </section>
 
