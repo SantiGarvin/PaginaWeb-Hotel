@@ -1,0 +1,200 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+form {
+    box-sizing: content-box;
+    min-width: 360px;
+}
+
+fieldset {
+    border: 1px solid #333;
+    margin: 10px 0;
+    padding: 5px;
+}
+
+input[type="text"] {
+    width: 200px;
+}
+
+legend,
+input[type="submit"] {
+    font-weight: bold;
+    border: 1px solid #333;
+    padding: 2px;
+    margin-left: 20px;
+    background-color: #2ba;
+}
+
+input[type="submit"] {
+    position: static;
+    display: block;
+    margin: 15px auto;
+    font-size: large;
+    padding: 5px 40px;
+}
+
+fieldset {
+    display: flex;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    margin: 10px 0;
+    padding: 0;
+    background-color: #2ba2;
+}
+
+fieldset label {
+    display: block;
+}
+
+.fila {
+    display: flex;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    padding: 5px;
+    margin: 5px;
+    width: calc(100% - 10px);
+    background-color: #2ba5;
+}
+
+.columna {
+    position: relative;
+    display: flexbox;
+    padding: 3px;
+    margin: 0px;
+    text-align: left;
+    box-sizing: border-box;
+    min-width: 400px;
+}
+
+.columna-nombre-apellidos {
+    border-right: #2ba solid 3px;
+    width: 40%;
+}
+
+.columna-nombre-apellidos input[id="apellidos"] {
+    width: 250px;
+}
+
+.columna-fotografia input[id="fotografia"] {
+    left: 90px;
+}
+
+input,
+select {
+    position: absolute;
+    left: 110px;
+}
+
+label,
+input {
+    display: inline-block;
+    box-sizing: border-box;
+}
+
+label {
+    margin: 5px;
+    width: fit-content;
+}
+
+.datos-personales label,
+.datos-acceso label {
+    text-align: right;
+}
+
+.datos-personales .columna-fotografia label {
+    text-align: left;
+    width: fit-content;
+}
+
+.datos-acceso .fila.correo .columna {
+    width: 100%;
+}
+
+.datos-acceso .fila.correo input {
+    width: calc(100% - 140px);
+    max-width: 500px;
+}
+
+.preferencias {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.preferencias .columna {
+    display: flexbox;
+    width: 35%;
+    vertical-align: top;
+    margin: 0 10px 10px 10px;
+}
+
+.preferencias .habitacion {
+    border-left: #2ba solid 3px;
+}
+
+.preferencias .columna .enunciado {
+    font-weight: bold;
+    width: 100%;
+    margin: 10px;
+}
+
+.preferencias .columna label {
+    display: block;
+    width: 100%;
+    left: 0;
+    margin: 0;
+}
+
+.preferencias .columna input[type="radio"],
+.preferencias .columna input[type="checkbox"] {
+    position: static;
+    margin-left: 30px;
+}
+
+.tratamiento-datos select {
+    position: static;
+}
+
+.texto-hover {
+    display: none;
+    margin: 5px;
+    font-size: small;
+    color: #47a;
+}
+
+.datos-personales:hover,
+.datos-acceso:hover,
+.preferencias:hover {
+    border: 5px solid #47a;
+}
+
+.datos-personales:hover .texto-personales,
+.datos-acceso:hover .texto-acceso {
+    display: block;
+}
+
+@media screen and (min-width: 460px) and (max-width: 630px) {
+    .tratamiento-datos select[id="aceptacion"] {
+        display: flex;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 830px) {
+    .columna-nombre-apellidos {
+        border: none;
+    }
+    
+    .columna-fotografia input[id="fotografia"] {
+        width: 100%;
+        left: 110px;
+    }
+
+    .columna.habitacion {
+        border: none;
+
+    }
+}

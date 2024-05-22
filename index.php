@@ -7,7 +7,7 @@ require 'room.php';
 require 'servicios.php';
 
 // Variables con los datos del autor y los enlaces
-$Diego = "Diego Sánchez Vargas y Santiago Garvin Pérez";
+$nombres = "Diego Sánchez Vargas y Santiago Garvin Pérez";
 $enlace = ".";
 $enlace2 = "";
 
@@ -22,22 +22,18 @@ $menu = [
     ['Servicio', 'index.php?p=2']
 ];
 
-$head = HTMLhead("Proyecto Final", ["css/styles.css"]);
+
+$estilos = glob('css/*.css'); // Array con los estilos CSS
+$head = HTMLhead("Proyecto Final", $estilos);
 $header = HTMLheader();
 $menu = HTMLnavegacion($menu, $opc, 'activo');
-$footer = HTMLfooter($Diego, $enlace, $enlace2);
+$footer = HTMLfooter($nombres, $enlace, $enlace2);
 
-switch ($opc) {
-    case 0:
-        $cuerpo = HTMLpag_inicio();
-        break;
-    case 1:
-        $cuerpo = HTMLhabitaciones();
-        break;
-    case 2:
-        $cuerpo = HTMLservicios();
-        break;
-}
+$cuerpo = match ($opc) {
+    0 => HTMLpag_inicio(),
+    1 => HTMLhabitaciones(),
+    2 => HTMLservicios(),
+};
 
 echo <<<HTML
 <!DOCTYPE html>

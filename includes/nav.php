@@ -39,5 +39,3 @@ function HTMLnavegacion($opciones,$activo,$activoclass) {
 </nav>
 */
 ?>
-
-
