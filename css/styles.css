@@ -139,11 +139,14 @@ img {
 /* Pie de página */
 
 footer {
-    display: flex;
-    flex-direction: row;
-    background-color: AntiqueWhite;
+    /*display: flex;*/
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+    padding: var(--footer-padding);
     text-align: center;
-    color: brown;
+    width: 100%;
+    bottom: 0;
+    position: sticky;
 }
 
 footer p {
