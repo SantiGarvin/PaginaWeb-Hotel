@@ -8,9 +8,11 @@ require 'servicios.php';
 require 'reservations.php';
 
 // Variables con los datos del autor y los enlaces
-$Diego = "Diego Sánchez Vargas y Santiago Garvin Pérez";
+$Autor = "Diego Sánchez Vargas y Santiago Garvin Pérez";
 $enlace = ".";
 $enlace2 = "";
+
+$permisosDeUsuarioactual = false; 
 
 $opc = 0;
 if (isset($_GET["p"]) && ($_GET["p"] >= 0 || $_GET["p"] <= 3)) {
@@ -18,16 +20,20 @@ if (isset($_GET["p"]) && ($_GET["p"] >= 0 || $_GET["p"] <= 3)) {
 }
 
 $menu = [
-    ['Inicio', 'index.php?p=0'],
-    ['Habitaciones', 'index.php?p=1'],
-    ['Servicio', 'index.php?p=2'],
-    ['RecepcionistaSOLO', 'index.php?p=3']
+  ['Inicio', 'index.php?p=0'],
+  ['Habitaciones', 'index.php?p=1'],
+  ['Servicio', 'index.php?p=2'],
+  ['Registro', 'index.php?p=4']
 ];
+
+if($permisosDeUsuarioactual) {
+  $menu[] = ['RecepcionistaSOLO', 'index.php?p=3'];
+}
 
 $head = HTMLhead("Proyecto Final", ["css/styles.css"]);
 $header = HTMLheader();
 $menu = HTMLnavegacion($menu, $opc, 'activo');
-$footer = HTMLfooter($Diego, $enlace, $enlace2);
+$footer = HTMLfooter($Autor, $enlace, $enlace2);
 
 switch ($opc) {
     case 0:
@@ -41,6 +47,9 @@ switch ($opc) {
         break;
     case 3:
         $cuerpo = HTMLreservations();
+        break;
+    case 4:
+        $cuerpo = HTMLregistro();
         break;
 }
 
