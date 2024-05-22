@@ -9,13 +9,19 @@
  *   $activoclass : Es el nombre de la clase CSS que se pondrá al elemento $activo
  */
 function HTMLnavegacion($opciones,$activo,$activoclass) {
-    echo <<< HTML
-    <nav>
-      <ul>
+    echo <<<HTML
+    <nav class="navbar">
+      <ul class="navbar__list">
     HTML;
-    foreach ($opciones as $idx => $item)
-      echo '    <li'.($idx==$activo?' class="'.$activoclass.'"':'').'>'.'<a href="'.$item[1].'">'.$item[0].'</a></li>';
-    echo <<< HTML
+
+    foreach ($opciones as $idx => $item) {
+        $itemClass = $idx == $activo ? $activoclass : '';
+        echo <<<HTML
+        <li class="navbar__item $itemClass"><a class="navbar__link" href="$item[1]">$item[0]</a></li>
+        HTML;
+    }
+
+    echo <<<HTML
       </ul>
     </nav>
     HTML;
