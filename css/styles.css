@@ -33,8 +33,7 @@ body {
 body,
 .header,
 .navbar,
-.main-content,
-.footer {
+.main-content {
     box-sizing: border-box;
 }
 
@@ -57,7 +56,7 @@ h3 {
     font-size: 16px;
     margin: 10px 0 10px 20px;
     font-weight: bold;
-    color: var(--terciary-color)
+    color: var(--terciary-color);
 }
 
 img {
@@ -65,7 +64,6 @@ img {
 }
 
 /* Encabezado */
-
 .header {
     background-color: var(--primary-color);
     color: var(--white-color);
@@ -88,7 +86,6 @@ img {
 }
 
 /* Navegación */
-
 .navbar {
     background-color: var(--secondary-color);
     padding: var(--navbar-padding) 0;
@@ -123,7 +120,7 @@ img {
 
 .navbar__link:hover {
     background-color: var(--hover-color);
-    color: var(--accent-color)
+    color: var(--accent-color);
 }
 
 .index--item a {
@@ -132,6 +129,7 @@ img {
 }
 
 .main-content {
+    flex: 1;
     max-width: var(--max-width);
     margin: 10px auto;
     padding: var(--content-padding);
@@ -140,8 +138,8 @@ img {
 }
 
 /* Pie de página */
-
 footer {
+    display: flex;
     margin-top: auto;
     background-color: var(--secondary-color);
     color: var(--white-color);
