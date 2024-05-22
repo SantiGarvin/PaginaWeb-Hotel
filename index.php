@@ -34,7 +34,7 @@ $estilos = glob('css/*.css'); // Array con los estilos CSS
 $head = HTMLhead("Proyecto Final", $estilos);
 $header = HTMLheader();
 $menu = HTMLnavegacion($menu, $opc, 'activo');
-$footer = HTMLfooter($Diego, $enlace, $enlace2);
+$footer = HTMLfooter($nombres, $enlace, $enlace2);
 
 $cuerpo = match ($opc) {
     0 => HTMLpag_inicio(),
