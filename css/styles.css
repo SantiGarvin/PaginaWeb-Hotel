@@ -19,6 +19,9 @@
 
 /* Estilos generales */
 body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     font-family: var(--font-family);
     margin: 0;
     padding: 0;
@@ -139,14 +142,12 @@ img {
 /* Pie de página */
 
 footer {
-    /*display: flex;*/
+    margin-top: auto;
     background-color: var(--secondary-color);
     color: var(--white-color);
     padding: var(--footer-padding);
     text-align: center;
     width: 100%;
-    bottom: 0;
-    position: sticky;
 }
 
 footer p {

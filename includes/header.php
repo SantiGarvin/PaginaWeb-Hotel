@@ -24,7 +24,7 @@ function HTMLheader() {
   echo <<< HTML
   <header class="header">
     <a href="index.html" class="header__link">
-      <img class="header__icon" src="../img/icono.png" alt="Icono del hotel">
+      <img class="header__icon" src="img/icono.png" alt="Icono del hotel">
     </a>
     <h1 class="header__title">Hotel Granada View</h1>
   </header>
