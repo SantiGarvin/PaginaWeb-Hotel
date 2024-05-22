@@ -1,7 +1,7 @@
 <?php
 
 function HTMLpag_inicio() {
-  return <<< HTML
+  return <<<HTML
   <main>
   <h2>Bienvenido a Granada View</h2>
   <p><strong>Granada View</strong>, su hotel con las mejores vistas de la Alhambra. Situado en pleno corazón
@@ -9,7 +9,7 @@ function HTMLpag_inicio() {
       atardeceres inolvidables con el emblemático palacio nazarí como telón de fondo.</p>
   <p>Disfrute de nuestras habitaciones amplias y luminosas, equipadas con todo el confort para una estancia
       perfecta.</p>
-  <img src="../img/hotel_fachada.jpg" alt="Fachada del Hotel Granada View" width="900">  </main>	
+  <img src="../img/hotel_fachada.jpg" alt="Fachada del Hotel Granada View" width="900">  </main>  
   <section class="galeria">
     <h2>Galería de imágenes</h2>
     <ul>
@@ -17,9 +17,8 @@ function HTMLpag_inicio() {
         <li><img src="../img/restaurante.jpg" alt="Restaurante" width="500" height="350"></li>
     </ul>
 </section>
-  HTML;
+HTML;
 }
-
 
 /*
 <section class="main-section">

@@ -1,6 +1,8 @@
 <?php
 require 'includes/header.php';
 require 'includes/footer.php';
+require 'includes/nav.php';
+require 'inicio.php';
 
 //Variables con los datos del autor y los enlaces
 $Diego = "Diego Sánchez Vargas y Santiago Garvin Pérez";
@@ -15,9 +17,9 @@ $footer = HTMLfooter($Diego, $enlace, $enlace2);
 
 switch ($opc) {
     case 0: $cuerpo = HTMLpag_inicio();   break;
-    case 1: $cuerpo = HTMLpag_alan();   break;
-    case 2: $cuerpo = HTMLpag_ada();   break;
-    case 3: $cuerpo = HTMLpag_contacto();   break;
+    //case 1: $cuerpo = HTMLpag_alan();   break;
+    //case 2: $cuerpo = HTMLpag_ada();   break;
+    //case 3: $cuerpo = HTMLpag_contacto();   break;
 }
 
 
@@ -25,12 +27,12 @@ switch ($opc) {
 
 <!DOCTYPE html>
 <html>
-  <?php $head ?>
+  <?php echo $head; ?>
   <body>
     <?php
-    $menu
-    //HTMLpag_inicio();                           // Cambiamos contenido principal
-    $footer
+    echo $menu;
+    echo $cuerpo;
+    echo $footer;
     ?>
   </body>
 </html>
