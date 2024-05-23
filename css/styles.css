@@ -91,6 +91,7 @@ img {
     padding: var(--navbar-padding) 0;
     max-width: var(--max-width);
     margin: 10px auto;
+    margin-left: calc(auto - 250px);
     position: sticky;
     top: 10px;
     z-index: 1000;
@@ -152,6 +153,18 @@ footer p {
     margin: 0;
     padding: 10px;
     width: 100%;
+}
+
+.aside_login {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 250px; 
+    height: 100%; 
+    background-color: var(--background-color);
+    padding: var(--content-padding);
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
 }
 
 @media screen and (max-width: 630px) {

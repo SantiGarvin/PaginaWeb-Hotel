@@ -56,6 +56,7 @@ $estilos = glob('css/*.css'); // Array con los estilos CSS
 $head = HTMLhead("Proyecto Final", $estilos);
 $header = HTMLheader();
 $menu_html = HTMLnavegacion($menu, $opc, 'activo');
+$aside = HTMLaside();
 $footer = HTMLfooter($nombres, $enlace, $enlace2);
 
 $cuerpo = match ($opc) {
@@ -92,6 +93,7 @@ echo <<<HTML
     $header
     $menu_html
     $cuerpo
+    $aside
     $footer
   </body>
 </html>
