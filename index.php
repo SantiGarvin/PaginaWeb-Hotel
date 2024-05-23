@@ -6,33 +6,31 @@ require 'inicio.php';
 require 'room.php';
 require 'servicios.php';
 require 'reservations.php';
+require 'register.php';
 
-
-
-$debug = true;
-
+$debug = false;
 
 // Variables con los datos del autor y los enlaces
 $nombres = "Diego Sánchez Vargas y Santiago Garvin Pérez";
 $enlace = ".";
 $enlace2 = "";
 
-$permisosDeUsuarioactual = false; 
+$permisosDeUsuarioactual = true; 
 
 $opc = 0;
 if (isset($_GET["p"]) && ($_GET["p"] >= 0 || $_GET["p"] <= 4)) {
-    $opc = $_GET['p'];
+    $opc = (int)$_GET['p'];
 }
 
 $menu = [
   ['Inicio', 'index.php?p=0'],
   ['Habitaciones', 'index.php?p=1'],
   ['Servicio', 'index.php?p=2'],
-  ['Registro', 'index.php?p=4']
+  ['Registro', 'index.php?p=3']
 ];
 
 if($permisosDeUsuarioactual) {
-  $menu[] = ['RecepcionistaSOLO', 'index.php?p=3'];
+  $menu[] = ['RecepcionistaSOLO', 'index.php?p=4'];
 }
 
 $estilos = glob('css/*.css'); // Array con los estilos CSS
@@ -45,17 +43,34 @@ $cuerpo = match ($opc) {
     0 => HTMLpag_inicio(),
     1 => HTMLhabitaciones(),
     2 => HTMLservicios(),
-    3 => HTMLreservations(),
-    4 => HTMLregistro()
+    3 => HTMLregistro(),
+    4 => HTMLreservations(),
+    default => HTMLpag_error()
+
 };
+
+if ($debug) {
+    echo "<pre>";
+    echo "<h2>DEBUG</h2>";
+    echo "<h3>Variables POST</h3>";
+    print_r($_POST);
+    echo "<h3>Variables GET</h3>";
+    print_r($_GET);
+    echo "</pre>";
+
+    echo "<h2>Variables</h2>";
+    echo "<h3>opc: $opc</h3>";
+    echo "<h3>menu:</h3>";
+    print_r($menu);
+
+
+}
+
 echo <<<HTML
 <!DOCTYPE html>
 <html>
   $head
   <body>
-HTML;
-    if($debug) echo $opc;
-echo <<<HTML
     $header
     $menu
     $cuerpo
@@ -63,3 +78,5 @@ echo <<<HTML
   </body>
 </html>
 HTML;
+
+?>
