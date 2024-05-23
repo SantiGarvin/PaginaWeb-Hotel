@@ -15,6 +15,7 @@
     --navbar-padding: 10px;
     --content-padding: 20px;
     --footer-padding: 10px;
+    --width-aside: 250px; /* Ancho del aside */
 }
 
 /* Estilos generales */
@@ -28,6 +29,7 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
     min-width: var(--min-width);
+    padding-right: var(--width-aside); /* Reserva espacio para el aside */
 }
 
 body,
@@ -89,9 +91,8 @@ img {
 .navbar {
     background-color: var(--secondary-color);
     padding: var(--navbar-padding) 0;
-    max-width: var(--max-width);
+    max-width: calc(100% - var(--width-aside)); /* Ajusta el ancho restando el ancho del aside */
     margin: 10px auto;
-    margin-left: calc(auto - 250px);
     position: sticky;
     top: 10px;
     z-index: 1000;
@@ -131,7 +132,7 @@ img {
 
 .main-content {
     flex: 1;
-    max-width: var(--max-width);
+    max-width: calc(100% - var(--width-aside)); /* Ajusta el ancho restando el ancho del aside */
     margin: 10px auto;
     padding: var(--content-padding);
     background-color: var(--white-color);
@@ -159,12 +160,39 @@ footer p {
     position: fixed;
     right: 0;
     top: 0;
-    width: 250px; 
-    height: 100%; 
+    width: var(--width-aside);
+    height: 100%;
     background-color: var(--background-color);
     padding: var(--content-padding);
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
     box-sizing: border-box;
+}
+
+.aside_login h2 {
+    color: var(--primary-color);
+}
+
+.aside_login input {
+    width: 50%;
+}
+
+.aside_login input[type="submit"] {
+    position: static;
+    display: block;
+    font-size: large;
+    margin: 0 ;
+    padding: 5px 40px;
+}
+
+@media screen and (max-width: 930px) {
+    body {
+        padding-right: 0; /* Elimina el espacio reservado para el aside en pantallas pequeñas */
+    }
+
+    .navbar,
+    .main-content {
+        max-width: 100%; /* Restaura el ancho completo cuando el aside no cabe */
+    }
 }
 
 @media screen and (max-width: 630px) {
