@@ -7,6 +7,11 @@ require 'room.php';
 require 'servicios.php';
 require 'reservations.php';
 
+
+
+$debug = true;
+
+
 // Variables con los datos del autor y los enlaces
 $nombres = "Diego Sánchez Vargas y Santiago Garvin Pérez";
 $enlace = ".";
@@ -43,12 +48,14 @@ $cuerpo = match ($opc) {
     3 => HTMLreservations(),
     4 => HTMLregistro()
 };
-
 echo <<<HTML
 <!DOCTYPE html>
 <html>
   $head
   <body>
+HTML;
+    if($debug) echo $opc;
+echo <<<HTML
     $header
     $menu
     $cuerpo
@@ -56,4 +63,3 @@ echo <<<HTML
   </body>
 </html>
 HTML;
-?>
