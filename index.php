@@ -1,4 +1,15 @@
 <?php
+session_start();
+
+// Simulación de tipos de usuario
+// Esto generalmente vendría de una base de datos o un sistema de autenticación
+// Los valores podrían ser 'anonimo', 'registrado', 'recepcionista', 'administrador'
+if (!isset($_SESSION['tipo_usuario'])) {
+    $_SESSION['tipo_usuario'] = 'anonimo'; // Valor predeterminado
+}
+
+$tipo_usuario = $_SESSION['tipo_usuario'];
+
 require 'includes/header.php';
 require 'includes/footer.php';
 require 'includes/nav.php';
@@ -15,28 +26,36 @@ $nombres = "Diego Sánchez Vargas y Santiago Garvin Pérez";
 $enlace = ".";
 $enlace2 = "";
 
-$permisosDeUsuarioactual = true; 
-
 $opc = 0;
-if (isset($_GET["p"]) && ($_GET["p"] >= 0 || $_GET["p"] <= 4)) {
+if (isset($_GET["p"]) && ($_GET["p"] >= 0 && $_GET["p"] <= 6)) {
     $opc = (int)$_GET['p'];
 }
 
 $menu = [
-  ['Inicio', 'index.php?p=0'],
-  ['Habitaciones', 'index.php?p=1'],
-  ['Servicio', 'index.php?p=2'],
-  ['Registro', 'index.php?p=3']
+    ['Inicio', 'index.php?p=0'],
+    ['Habitaciones', 'index.php?p=1'],
+    ['Servicio', 'index.php?p=2'],
 ];
 
-if($permisosDeUsuarioactual) {
-  $menu[] = ['RecepcionistaSOLO', 'index.php?p=4'];
+switch ($tipo_usuario) {
+    case 'anonimo':
+        $menu[] = ['Registro', 'index.php?p=3'];
+        break;
+    case 'registrado':
+        $menu[] = ['Mi cuenta', 'index.php?p=5'];
+        break;
+    case 'recepcionista':
+        $menu[] = ['Recepcionista', 'index.php?p=4'];
+        break;
+    case 'administrador':
+        $menu[] = ['Admin', 'index.php?p=6'];
+        break;
 }
 
 $estilos = glob('css/*.css'); // Array con los estilos CSS
 $head = HTMLhead("Proyecto Final", $estilos);
 $header = HTMLheader();
-$menu = HTMLnavegacion($menu, $opc, 'activo');
+$menu_html = HTMLnavegacion($menu, $opc, 'activo');
 $footer = HTMLfooter($nombres, $enlace, $enlace2);
 
 $cuerpo = match ($opc) {
@@ -44,9 +63,10 @@ $cuerpo = match ($opc) {
     1 => HTMLhabitaciones(),
     2 => HTMLservicios(),
     3 => HTMLregistro(),
-    4 => HTMLreservations(),
+    4 => $tipo_usuario === 'recepcionista' || $tipo_usuario === 'administrador' ? HTMLreservations() : HTMLpag_error(),
+    5 => $tipo_usuario === 'registrado' ? HTMLmiCuenta() : HTMLpag_error(),
+    6 => $tipo_usuario === 'administrador' ? HTMLadmin() : HTMLpag_error(),
     default => HTMLpag_error()
-
 };
 
 if ($debug) {
@@ -62,8 +82,6 @@ if ($debug) {
     echo "<h3>opc: $opc</h3>";
     echo "<h3>menu:</h3>";
     print_r($menu);
-
-
 }
 
 echo <<<HTML
@@ -72,11 +90,11 @@ echo <<<HTML
   $head
   <body>
     $header
-    $menu
+    $menu_html
     $cuerpo
     $footer
   </body>
 </html>
 HTML;
-
+ 
 ?>
