@@ -20,6 +20,7 @@ if (!isset($_SESSION['tipo_usuario'])) {
 
 $tipo_usuario = $_SESSION['tipo_usuario'];
 
+// Variables de DEBUG y simulación de usuario
 $debug = false;
 $tipo_usuario = 'registrado'; // Simulación de usuario registrado
 
