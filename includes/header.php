@@ -46,7 +46,7 @@ function HTMLpag_error() {
 /**
  * Generar aside para login 
  */
-function HTMLaside() {
+function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $huespedesAlojados) {
   return <<<HTML
   <aside class="aside_login">
       <h2>Login</h2>
@@ -57,6 +57,11 @@ function HTMLaside() {
           <input type="password" id="password" name="password" required><br>
           <input type="submit" value="Login">
       </form>
+      <h3>Información del Hotel</h3>
+      <p>Nº total de habitaciones: {$totalHabitaciones}</p>
+      <p>Nº de habitaciones libres: {$habitacionesLibres}</p>
+      <p>Capacidad total del hotel: {$capacidadTotal} huéspedes</p>
+      <p>Nº de huéspedes alojados: {$huespedesAlojados}</p>
   </aside>
   HTML;
 }
