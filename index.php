@@ -1,13 +1,13 @@
 <?php
-require 'includes/header.php';
-require 'includes/footer.php';
-require 'includes/nav.php';
-require 'inicio.php';
-require 'room.php';
-require 'servicios.php';
-require 'reservations.php';
-require 'register.php';
-require 'reservar.php';
+require_once 'includes/header.php';
+require_once 'includes/footer.php';
+require_once 'includes/nav.php';
+require_once 'inicio.php';
+require_once 'room.php';
+require_once 'servicios.php';
+require_once 'reservations.php';
+require_once 'register.php';
+require_once 'reservar.php';
 
 session_start();
 
@@ -40,26 +40,23 @@ $menu = [
     ['Servicio', 'index.php?p=2'],
 ];
 
-switch ($tipo_usuario) {
-    case 'anonimo':
-        $menu[] = ['Registro', 'index.php?p=3'];
-        break;
-    case 'registrado':
-        $menu[] = ['Reservar', 'index.php?p=5'];
-        $menu[] = ['Mi cuenta', 'index.php?p=6'];
-        break;
-    case 'recepcionista':
-        $menu[] = ['Recepcionista', 'index.php?p=4'];
-        break;
-    case 'administrador':
-        $menu[] = ['Admin', 'index.php?p=6'];
-        break;
-}
+$itemsAdicionalesMenu = match ($tipo_usuario) {
+    'anonimo'           => [['Registro', 'index.php?p=3']],
+    'registrado'        => [
+        ['Reservar', 'index.php?p=5'],
+        ['Mi cuenta', 'index.php?p=6']
+    ],
+    'recepcionista'     => [['Recepcionista', 'index.php?p=4']],
+    'administrador'     => [['Admin', 'index.php?p=6']],
+    default             => []
+};
+
+$menu = array_merge($menu, $itemsAdicionalesMenu);
 
 $estilos = glob('css/*.css'); // Array con los estilos CSS
 $head = HTMLhead("Proyecto Final", $estilos);
 $header = HTMLheader();
-$menu_html = HTMLnavegacion($menu, $opc, 'activo');
+$menu = HTMLnavbar($menu, $opc, 'activo');
 $aside = HTMLaside(3, 2, 9, 5); //$totalHabitaciones, $habitacionesLibres, $capacidadTotal, $huespedesAlojados
 $footer = HTMLfooter($autores, $enlace, $enlace2);
 
@@ -70,8 +67,8 @@ $cuerpo = match ($opc) {
     3 => HTMLregistro(),
     4 => $tipo_usuario === 'recepcionista' || $tipo_usuario === 'administrador' ? HTMLreservations() : HTMLpag_error(),
     5 => $tipo_usuario === 'registrado' ? HTMLreservar() : HTMLpag_error(),
-    6 => $tipo_usuario === 'registrado' ? HTMLmicuenta() : HTMLpag_error(),
-    7 => $tipo_usuario === 'administrador' ? HTMLadmin() : HTMLpag_error(),
+    // 6 => $tipo_usuario === 'registrado' ? HTMLmicuenta() : HTMLpag_error(),
+    // 7 => $tipo_usuario === 'administrador' ? HTMLadmin() : HTMLpag_error(),
     default => HTMLpag_error()
 };
 
@@ -97,12 +94,12 @@ echo <<<HTML
   $head
   <body>
     $header
-    $menu_html
+    $menu
     $cuerpo
     $aside
     $footer
   </body>
 </html>
 HTML;
- 
+
 ?>

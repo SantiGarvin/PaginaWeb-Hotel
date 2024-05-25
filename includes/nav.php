@@ -8,8 +8,8 @@
  *   $activo : Es el número del elemento del array $opciones que se mostrará resaltado (0, 1, ...)
  *   $activoclass : Es el nombre de la clase CSS que se pondrá al elemento $activo
  */
-function HTMLnavegacion($opciones,$activo,$activoclass) {
-    echo <<<HTML
+function HTMLnavbar($opciones,$activo,$activoclass) {
+    return <<<HTML
     <nav class="navbar">
       <ul class="navbar__list">
     HTML;

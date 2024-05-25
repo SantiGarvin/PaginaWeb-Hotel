@@ -6,9 +6,11 @@
  * $enlaceRestauracion : Es un string con la URL del fichero de datos para restaurar la BBDD.
  */
 function HTMLfooter($autor, $enlaceDocumentacion, $enlaceRestauracion) {
-    echo <<< HTML
+    return <<< HTML
     <footer>
-        <p>Autor/es: $autor</p>
+        <p>Autor/es:
+            $autor
+        </p>
         <p><a href="$enlaceDocumentacion">Documento PDF documentación</a></p>
         <p><a href="$enlaceRestauracion">Fichero de datos restauración BBDD</a></p>
     </footer>
