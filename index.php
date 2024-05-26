@@ -87,19 +87,18 @@ if ($debug) {
     print_r($menu);
     echo "<h3>tipo_usuario: $tipo_usuario</h3>";
 }
+?>
 
-echo <<<HTML
 <!DOCTYPE html>
 <html>
-  $head
-  <body>
-    $header
-    $menu
-    $cuerpo
-    $aside
-    $footer
+  <?= $head ?>
+<body>
+    <?= $header ?>
+    <?= $menu ?>
+    <div class="content">
+        <?= $cuerpo ?>
+        <?= $aside ?>
+    </div>
+    <?= $footer ?>
   </body>
 </html>
-HTML;
-
-?>

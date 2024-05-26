@@ -1,4 +1,5 @@
 <?php
+
 /***************************
  * Generar menú de navegación.
  * Parámetros:
@@ -8,24 +9,27 @@
  *   $activo : Es el número del elemento del array $opciones que se mostrará resaltado (0, 1, ...)
  *   $activoclass : Es el nombre de la clase CSS que se pondrá al elemento $activo
  */
-function HTMLnavbar($opciones,$activo,$activoclass) {
-    return <<<HTML
-    <nav class="navbar">
-      <ul class="navbar__list">
-    HTML;
+function HTMLnavbar($opciones, $activo, $activoclass)
+{
+  $navbar = <<<HTML
+  <nav class="navbar">
+    <ul class="navbar__list">
+  HTML;
 
-    foreach ($opciones as $idx => $item) {
-        $itemClass = $idx == $activo ? $activoclass : '';
-        echo <<<HTML
-        <li class="navbar__item $itemClass"><a class="navbar__link" href="$item[1]">$item[0]</a></li>
-        HTML;
-    }
-
-    echo <<<HTML
-      </ul>
-    </nav>
-    HTML;
+  foreach ($opciones as $idx => $item) {
+    $itemClass = $idx == $activo ? $activoclass : '';
+    $navbar .= <<<HTML
+      <li class="navbar__item $itemClass"><a class="navbar__link" href="{$item[1]}">{$item[0]}</a></li>
+  HTML;
   }
+
+  $navbar .= <<<HTML
+    </ul>
+  </nav>
+  HTML;
+
+  return $navbar;
+}
 
 /*
 <nav class="navbar">
@@ -38,4 +42,3 @@ function HTMLnavbar($opciones,$activo,$activoclass) {
     </ul>
 </nav>
 */
-?>

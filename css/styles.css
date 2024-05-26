@@ -22,14 +22,14 @@
 body {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    width: 100%;
+    /* min-height: 100vh; */
     font-family: var(--font-family);
     margin: 0;
     padding: 0;
     background-color: var(--background-color);
     color: var(--text-color);
     min-width: var(--min-width);
-    padding-right: var(--width-aside); /* Reserva espacio para el aside */
 }
 
 body,
@@ -90,12 +90,13 @@ img {
 /* Navegación */
 .navbar {
     background-color: var(--secondary-color);
+    width: 100%;
     padding: var(--navbar-padding) 0;
     max-width: calc(100% - var(--width-aside)); /* Ajusta el ancho restando el ancho del aside */
     margin: 10px auto;
     position: sticky;
     top: 10px;
-    z-index: 1000;
+    z-index: 1001;
 }
 
 .navbar__list {
@@ -133,7 +134,7 @@ img {
 .main-content {
     flex: 1;
     max-width: calc(100% - var(--width-aside)); /* Ajusta el ancho restando el ancho del aside */
-    margin: 10px auto;
+    margin: auto;
     padding: var(--content-padding);
     background-color: var(--white-color);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -157,18 +158,38 @@ footer p {
     width: 100%;
 }
 
+footer a {
+    color: var(--white-color);
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: var(--accent-color);
+}
+
+.content {
+    display: inline-flex;
+    min-height: 100vh;
+    background-color: var(--background-color);
+    color: var(--primary-color);
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+}
+
 .aside_login {
-    position: fixed;
+    position: sticky;
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    right: 0;
-    top: 0;
+    /* height: 100vh; */
+    top: 20%;
+    /* right: 0;
+    top: 0; */
     width: var(--width-aside);
-    height: 100vh;
+    height: 76vh;
     background-color: var(--background-color);
     padding: var(--content-padding);
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
     box-sizing: border-box;
     z-index: 1000;
 }

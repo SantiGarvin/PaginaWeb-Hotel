@@ -4,17 +4,19 @@
  *   $titulo : Es un string con el título (title) de la página.
  *   $estilos : Es un array de cadenas con los nombres de los ficheros de estilo.
  */
-function HTMLhead($titulo,$estilos) {
-  return <<< HTML
+function HTMLhead($titulo, $estilos) {
+  $links = '';
+  foreach ($estilos as $f) {
+      $links .= '<link rel="stylesheet" href="' . $f . '">';
+  }
+
+  return <<<HTML
   <head>
-    <meta charset="utf-8">
-  HTML;
-  foreach ($estilos as $f)
-    echo '  <link rel="stylesheet" href="'.$f.'">';
-  echo <<< HTML
-    <title>$titulo</title>
+      <meta charset="utf-8">
+      $links
+      <title>$titulo</title>
   </head>
-  HTML;
+HTML;
 }
 
 /***************************
