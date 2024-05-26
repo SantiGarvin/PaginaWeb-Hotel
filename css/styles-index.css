@@ -3,7 +3,7 @@
 .main-content {
     max-width: 900px;
     min-width: 580px;
-    margin: 10px auto;
+    margin: 10px 0 0 0;
     padding: 20px;
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -25,11 +25,16 @@
 .main-content img {
     max-width: 100%;
     min-width: 380px;
-    height: auto;
-    margin: auto;
-    margin-top: 20px;
+    /* height: auto; */
+    margin: 20px auto;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.main-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 /* Galería de imágenes */
@@ -102,7 +107,7 @@
     }
 
     .galeria ul {
-        display: flexbox;
+        display: inline-flex;
         /* flex-direction: row; */
         justify-content: space-between;
     }
