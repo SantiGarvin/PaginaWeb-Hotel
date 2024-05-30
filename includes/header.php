@@ -53,9 +53,9 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
   return <<<HTML
   <aside class="aside_login">
       <h2>Login</h2>
-      <form action="login.php" method="post">
-          <label for="username">Username:</label>
-          <input type="text" id="username" name="username" required><br>
+      <form action="" method="post">
+          <label for="username">E-mail:</label>
+          <input type="text" id="username" name="e-mail" required><br>
           <label for="password">Password:</label>
           <input type="password" id="password" name="password" required><br>
           <input type="submit" value="Login">

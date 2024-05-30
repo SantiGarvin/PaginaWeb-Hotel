@@ -8,6 +8,8 @@ require_once 'servicios.php';
 require_once 'reservations.php';
 require_once 'register.php';
 require_once 'reservar.php';
+require_once 'miCuenta.php';
+require_once 'admin.php';
 
 session_start();
 
@@ -22,7 +24,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
 // Variables de DEBUG y simulación de usuario
 $debug = false;
-$tipo_usuario = 'registrado'; // Simulación de usuario registrado
+$tipo_usuario = 'administrador'; // Simulación de usuario registrado
 
 // Variables con los datos del autor y los enlaces (información para el footer)
 $autores = "Diego Sánchez Vargas y Santiago Garvin Pérez";
@@ -47,7 +49,12 @@ $itemsAdicionalesMenu = match ($tipo_usuario) {
         ['Mi cuenta', 'index.php?p=6']
     ],
     'recepcionista'     => [['Recepcionista', 'index.php?p=4']],
-    'administrador'     => [['Admin', 'index.php?p=6']],
+    'administrador'     => [
+        ['Reservar', 'index.php?p=5'],
+        ['Mi cuenta', 'index.php?p=6'],
+        ['Recepcionista', 'index.php?p=4'],
+        ['Admin', 'index.php?p=7']
+    ],
     default             => []
 };
 
@@ -66,9 +73,9 @@ $cuerpo = match ($opc) {
     2 => HTMLservicios(),
     3 => HTMLregistro(),
     4 => $tipo_usuario === 'recepcionista' || $tipo_usuario === 'administrador' ? HTMLreservations() : HTMLpag_error(),
-    5 => $tipo_usuario === 'registrado' ? HTMLreservar() : HTMLpag_error(),
-    // 6 => $tipo_usuario === 'registrado' ? HTMLmicuenta() : HTMLpag_error(),
-    // 7 => $tipo_usuario === 'administrador' ? HTMLadmin() : HTMLpag_error(),
+    5 => $tipo_usuario === 'registrado' || $tipo_usuario === 'administrador' ? HTMLreservar() : HTMLpag_error(),
+    6 => $tipo_usuario === 'registrado' || $tipo_usuario === 'administrador' ? HTMLmicuenta() : HTMLpag_error(),
+    7 => $tipo_usuario === 'administrador' || $tipo_usuario === 'administrador' ? HTMLadmin() : HTMLpag_error(),
     default => HTMLpag_error()
 };
 
