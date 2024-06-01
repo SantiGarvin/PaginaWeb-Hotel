@@ -28,9 +28,7 @@ if (!Session::get('tipo_usuario')) {
 $tipo_usuario = Session::get('tipo_usuario');
 
 $error = '';
-if (isset($_GET['error']) && $_GET['error'] === 'invalid_credentials') {
-    $error = 'Usuario o contraseña incorrectos';
-}
+
 
 // Variables de DEBUG y simulación de usuario
 $debug = false;
@@ -101,6 +99,10 @@ if ($debug) {
     echo "<h3>menu:</h3>";
     print_r($menu);
     echo "<h3>tipo_usuario: $tipo_usuario</h3>";
+
+    echo "<h3>Variables de sesión</h3>";
+    echo "<pre>";
+    print_r(Session::get('username'));
 }
 ?>
 

@@ -31,9 +31,10 @@ function autenticacion(){
         exit();
     } else {
         // Credenciales inválidas, redirigir con error
-        header('Location: index.php?error=invalid_credentials');
-        exit();
+        return false;
     }
+    
+    return true;
 }
 
 ?>

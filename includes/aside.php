@@ -2,41 +2,77 @@
 require_once 'includes/Session.php';
 require_once 'includes/autenticacion.php';
 
-
-
-if(isset($_POST['username']) && isset($_POST['password'])){
-  autenticacion();
-  $username =  Session::get('name');
-}
-
-if(Session::isSessionOpen()){
-  $usuario = Session::get('usuario');
-}else{
-  Session::set('name', $username);
-}
-
 /**
  * Generar aside para login 
  */
 function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $huespedesAlojados)
 {
-  return <<<HTML
-  <aside class="aside_login">
-      <div class="login">
-        <h2>Sign in</h2>
-        <form action="" method="post">
-          <input type="text" id="username" name="username" placeholder="Usuario" required><br>
-          <input type="password" id="password" name="password" placeholder="Contraseña" required><br>
-          <input type="submit" value="Login">
-        </form>
-      </div>
-      <div class="info_hotel">
-        <h3>Información del Hotel</h3>
-        <p>Nº total de habitaciones: {$totalHabitaciones}</p>
-        <p>Nº de habitaciones libres: {$habitacionesLibres}</p>
-        <p>Capacidad total del hotel: {$capacidadTotal} huéspedes</p>
-        <p>Nº de huéspedes alojados: {$huespedesAlojados}</p>
-      </div>
-  </aside>
-  HTML;
+  $error = '';
+  if(isset($_POST['username']) && isset($_POST['password'])){
+    if(autenticacion()){
+      $username =  Session::get('username');
+    }
+    else{
+      $error = 'Usuario o contraseña incorrectos';
+    }
+  }
+  
+  if(!Session::isSessionOpen()){
+    Session::set('name', $username);
+  }
+
+
+  //Html del aside
+
+  if(Session::get('username') != ''){
+      $AUX .= <<<HTML
+      <aside class="aside_login">
+        <div class="login">
+          <h2>Bienvenido, {$username}</h2>
+          <form action="" method="post">
+            <input type="submit" value="Logout">
+          </form>
+        <div class="info_hotel">
+          <h3>Información del Hotel</h3>
+          <p>Nº total de habitaciones: {$totalHabitaciones}</p>
+          <p>Nº de habitaciones libres: {$habitacionesLibres}</p>
+          <p>Capacidad total del hotel: {$capacidadTotal} huéspedes</p>
+          <p>Nº de huéspedes alojados: {$huespedesAlojados}</p>
+        </div>
+      </aside>
+    HTML;
+    return $AUX;
+  }else{
+    $AUX = <<<HTML
+    <aside class="aside_login">
+        <div class="login">
+          <h2>Sign in</h2>
+          <form action="" method="post" novalidate>
+            <input type="text" id="username" name="username" placeholder="Usuario" required><br>
+            <input type="password" id="password" name="password" placeholder="Contraseña" required><br>
+            <input type="submit" value="Login">
+          </form>
+        </div>
+    HTML;
+
+    if($error != ''){
+      $AUX .= <<<HTML
+        <div class="error">
+          <p>{$error}</p>
+        </div>
+      HTML;
+    }
+
+    $AUX .= <<<HTML
+        <div class="info_hotel">
+          <h3>Información del Hotel</h3>
+          <p>Nº total de habitaciones: {$totalHabitaciones}</p>
+          <p>Nº de habitaciones libres: {$habitacionesLibres}</p>
+          <p>Capacidad total del hotel: {$capacidadTotal} huéspedes</p>
+          <p>Nº de huéspedes alojados: {$huespedesAlojados}</p>
+        </div>
+    </aside>
+    HTML;
+    return $AUX;
+  }
 }
