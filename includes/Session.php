@@ -7,15 +7,25 @@ class Session{
 
   // Session Start Method
   public static function init(){
+    if(!self::isSessionOpen()){
+      if (version_compare(phpversion(), '5.4.0', '<')) {
+        if (session_id() == '') {
+          session_start();
+        }
+      }else{
+        if (session_status() == PHP_SESSION_NONE) {
+          session_start();
+        }
+      }
+    }
+  }
 
+  // Check if session is open
+  public static function isSessionOpen(){
     if (version_compare(phpversion(), '5.4.0', '<')) {
-      if (session_id() == '') {
-        session_start();
-      }
-    }else{
-      if (session_status() == PHP_SESSION_NONE) {
-        session_start();
-      }
+      return (session_id() != '');
+    } else {
+      return (session_status() == PHP_SESSION_ACTIVE);
     }
   }
 
@@ -35,6 +45,8 @@ class Session{
       return false;
     }
   }
+
+
 
   // User logout Method
   public static function destroy(){

@@ -1,20 +1,11 @@
 <?php
 
 require_once 'includes/db-connection.php';
+require_once 'includes/Session.php';
 
-function InsertarReserva($fecha_entrada, $fecha_salida, $capacidad)
+function InsertarReserva($fecha_entrada, $fecha_salida, $capacidad , $id_usuario)
 {
     global $conn;
-
-    // Obtener id_cliente a partir del DNI
-    $sql = "SELECT id_usuario FROM Usuarios WHERE dni = '$capacidad'";
-    $result = $conn->query($sql);
-    if ($result->num_rows > 0) {
-        $id_cliente = $result->fetch_assoc()['id_usuario'];
-    } else {
-        echo "No se encontró el usuario con DNI: $capacidad";
-        return;
-    }
 
     // Obtener id_habitacion a partir del número de personas
     $sql = "SELECT id_habitacion FROM Habitaciones WHERE capacidad >= $capacidad LIMIT 1";
@@ -27,7 +18,7 @@ function InsertarReserva($fecha_entrada, $fecha_salida, $capacidad)
     }
 
     // Insertar la reserva
-    $sql = "INSERT INTO Reservas (id_cliente, id_habitacion, num_personas, dia_entrada, dia_salida, estado) VALUES ($id_cliente, $id_habitacion, $capacidad, '$fecha_entrada', '$fecha_salida', 'Pendiente')";
+    $sql = "INSERT INTO Reservas (id_cliente, id_habitacion, num_personas, dia_entrada, dia_salida, estado) VALUES ($id_usuario, $id_habitacion, $capacidad, '$fecha_entrada', '$fecha_salida', 'Pendiente')";
     if ($conn->query($sql) === TRUE) {
         echo "Reserva creada correctamente";
     } else {
@@ -42,7 +33,7 @@ function HTMLreservar() {
         $fecha_salida = $_POST['fecha_salida'];
         $capacidad = $_POST['n-personas'];
 
-        InsertarReserva($fecha_entrada, $fecha_salida, $capacidad);
+        InsertarReserva($fecha_entrada, $fecha_salida, $capacidad, Session::get('user')['id_usuario']);
     }
 
     return <<<HTML

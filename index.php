@@ -14,27 +14,23 @@ require_once 'mi-cuenta.php';
 require_once 'admin.php';
 require_once 'includes/Session.php';
 
-Session::init();
 
 // Simulación de tipos de usuario
 // Esto generalmente vendría de una base de datos o un sistema de autenticación
 // Los valores podrían ser 'anonimo', 'Cliente', 'Recepcionista', 'Administrador'
 Session::init();
 
-if (!Session::get('tipo_usuario')) {
-    Session::set('tipo_usuario', 'anonimo'); // Valor predeterminado
+if (!Session::get('user')) {
+    Session::set('user', ['rol' => 'anonimo']); // Valor predeterminado
 }
 
-$tipo_usuario = Session::get('tipo_usuario');
+$tipo_usuario = Session::get('user')['rol'];
 
 $error = '';
-if (isset($_GET['error']) && $_GET['error'] === 'invalid_credentials') {
-    $error = 'Usuario o contraseña incorrectos';
-}
+
 
 // Variables de DEBUG y simulación de usuario
 $debug = false;
-$tipo_usuario = 'Administrador'; // Simulación de usuario Cliente
 
 // Variables con los datos del autor y los enlaces (información para el footer)
 $autores = "Diego Sánchez Vargas y Santiago Garvín Pérez";
@@ -101,6 +97,10 @@ if ($debug) {
     echo "<h3>menu:</h3>";
     print_r($menu);
     echo "<h3>tipo_usuario: $tipo_usuario</h3>";
+
+    echo "<h3>Variables de sesión</h3>";
+    echo "<pre>";
+    print_r(Session::get('user'));
 }
 ?>
 

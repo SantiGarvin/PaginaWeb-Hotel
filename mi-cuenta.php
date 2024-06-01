@@ -1,16 +1,25 @@
 <?php
 
 require_once 'includes/db-connection.php';
-
+require_once 'includes/Session.php';
 
 function HTMLmicuenta()
 {
     global $conn;
 
+    $nombre = isset(Session::get('user')['nombre']) ? Session::get('user')['nombre'] : '';
+    $apellidos = isset(Session::get('user')['apellidos']) ? Session::get('user')['apellidos'] : '';
+    $dni = isset(Session::get('user')['dni']) ? Session::get('user')['dni'] : '';
+    $email = isset(Session::get('user')['email']) ? Session::get('user')['email'] : '';
+    $tarjeta = isset(Session::get('user')['num_tarjeta_credito']) ? Session::get('user')['num_tarjeta_credito'] : '';
+    $fecha_nacimiento = isset(Session::get('user')['fecha_nacimiento']) ? Session::get('user')['fecha_nacimiento'] : '';
+    $nacionalidad = isset(Session::get('user')['nacionalidad']) ? Session::get('user')['nacionalidad'] : '';
+    
+
     // Obtener reservas del usuario
     $sql = "SELECT id_reserva, dia_entrada, dia_salida FROM Reservas WHERE id_cliente = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $_SESSION['usuario_id']);
+    $stmt->bind_param("i", Session::get('user')['id_usuario']);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -25,11 +34,11 @@ function HTMLmicuenta()
                             <td>{$row['dia_salida']}</td>
                             <td>
                                 <form method='post' action='cancelar_reserva.php'>
-                                    <input type='hidden' name='id' value='{$row['id']}'>
+                                    <input type='hidden' name='id' value='{$row['id_reserva']}'>
                                     <button type='submit' name='accion' value='cancelar'>Cancelar</button>
                                 </form>
                                 <form method='post' action='modificar_reserva.php'>
-                                    <input type='hidden' name='id' value='{$row['id']}'>
+                                    <input type='hidden' name='id' value='{$row['id_reserva']}'>
                                     <button type='submit' name='accion' value='modificar'>Modificar</button>
                                 </form>
                             </td>
@@ -51,11 +60,11 @@ function HTMLmicuenta()
                         <div class="columna columna-nombre-apellidos">
                             <label for="nombre">
                                 Nombre:
-                                <input type="text" id="nombre" name="nombre" placeholder="(Obligatorio)" required size="20" maxlength="40" disabled>
+                                <input type="text" id="nombre" name="nombre" placeholder="(Obligatorio)" required size="20" maxlength="40" value="$nombre" disabled>
                             </label>
                             <label for="apellidos">
                                 Apellidos:
-                                <input type="text" id="apellidos" name="apellidos" title="Este campo es opcional" disabled>
+                                <input type="text" id="apellidos" name="apellidos" title="Este campo es opcional" value="$apellidos" disabled>
                             </label>
                         </div>
                     </div>
@@ -63,11 +72,11 @@ function HTMLmicuenta()
                         <div class="columna">
                             <label for="dni">
                                 DNI:
-                                <input type="text" id="dni" name="dni" placeholder="12345678A" required pattern="[0-9]{8}[A-Z]" disabled>
+                                <input type="text" id="dni" name="dni" placeholder="12345678A" required pattern="[0-9]{8}[A-Z]" value="$dni" disabled>
                             </label>
                             <label for="fecha-nacimiento">
                                 F. nacimiento:
-                                <input type="date" id="fecha-nacimiento" name="fecha_nacimiento" required>
+                                <input type="date" id="fecha-nacimiento" name="fecha_nacimiento" value="$fecha_nacimiento" required>
                             </label>
                         </div>
                         <div class="columna">
@@ -77,7 +86,7 @@ function HTMLmicuenta()
                             </label>
                             <label for="dni">
                                 Tarjeta:
-                                <input type="text" id="dni" name="tarjetaC" placeholder="#### #### #### ####" required pattern="[0-9]{12}">
+                                <input type="text" id="dni" name="tarjetaC" placeholder="#### #### #### ####" required pattern="[0-9]{12}" value="$tarjeta" >
                             </label>
                         </div>
                     </div>
@@ -89,7 +98,7 @@ function HTMLmicuenta()
                         <div class="columna">
                             <label for="correo">
                                 E-mail:
-                                <input type="email" id="correo" name="correo" placeholder="correo@example.com" required>
+                                <input type="email" id="correo" name="correo" placeholder="correo@example.com" value="$email" required>
                             </label>
                         </div>
                     </div>
