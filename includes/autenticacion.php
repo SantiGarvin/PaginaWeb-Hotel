@@ -1,10 +1,21 @@
 <?php
+<<<<<<< HEAD
+=======
 require_once 'db-connection.php'; 
 require_once 'Session.php'; 
+>>>>>>> 09407239c79ac612c84bb4e7d0c8e2d20be62a57
 
 function autenticacion(){
     global $conn;
 
+<<<<<<< HEAD
+
+
+if (!isset($_POST['username'], $_POST['password'])) {
+    // Si no hay datos, redirigir al formulario de login
+    header('Location: index.php');
+    exit();
+=======
     if (!isset($_POST['username'], $_POST['password'])) {
         // No se enviaron los datos necesarios
         echo 'Por favor, complete ambos campos correctamente';
@@ -31,6 +42,7 @@ function autenticacion(){
     }
     
     return true;
+>>>>>>> 09407239c79ac612c84bb4e7d0c8e2d20be62a57
 }
 
 ?>
