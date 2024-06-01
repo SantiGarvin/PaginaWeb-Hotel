@@ -11,6 +11,7 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
   if(isset($_POST['username']) && isset($_POST['password'])){
     if(autenticacion()){
       $user =  Session::get('user');
+      header("Location: ".$_SERVER['PHP_SELF']);
     }
     else{
       $error = 'Usuario o contraseña incorrectos';
@@ -20,12 +21,14 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
   if(!Session::isSessionOpen()){
     Session::set('nombre', $username);
   }else{
-    $nombreUsuario = Session::get('user')['nombre'];
+    $nombreUsuario = isset(Session::get('user')['nombre']) ? Session::get('user')['nombre'] : '';
   }
 
 
   if(isset($_POST['logout'])){
     Session::destroy();
+    header("Location: ".$_SERVER['PHP_SELF']);
+    exit();
   }
 
 
@@ -39,9 +42,10 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
       <aside class="aside_login">
         <div class="login">
         <h2>Bienvenido, {$nombreUsuario}</h2>
-          <form action="./index.php" method="post">
+          <form action="" method="post">
             <input type="submit" value="Logout" name="logout" >
           </form>
+        </div>
         <div class="info_hotel">
           <h3>Información del Hotel</h3>
           <p>Nº total de habitaciones: {$totalHabitaciones}</p>
