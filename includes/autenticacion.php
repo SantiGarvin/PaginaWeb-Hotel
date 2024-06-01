@@ -15,7 +15,7 @@ function autenticacion(){
     $password = $_POST['password'];
     
     // Consulta para verificar las credenciales del usuario
-    $stmt = $conn->prepare('SELECT id_usuario, clave, rol FROM Usuarios WHERE email = ?');
+    $stmt = $conn->prepare('SELECT id_usuario, nombre, apellidos, dni, email, num_tarjeta_credito, clave, rol FROM Usuarios WHERE email = ?');
     $stmt->bind_param('s', $username);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -24,9 +24,7 @@ function autenticacion(){
     if ($user && password_verify($password, $user['clave'])) {
         // Credenciales válidas, actualizar la sesión
         Session::init();
-        Session::set('tipo_usuario', $user['rol']);
-        Session::set('user_id', $user['id_usuario']);
-        Session::set('name', $user['nombre']);
+        Session::set('user', $user);
     } else {
         // Credenciales inválidas, redirigir con error
         return false;
