@@ -13,7 +13,7 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
   <aside class="aside_login">
       <div class="login">
         <h2>Sign in</h2>
-        <form action="includes/autenticacion.php" method="post">
+        <form action="includes/autenticacion.php" method="post" novalidate>
           <input type="text" id="username" name="username" placeholder="Usuario" required><br>
           <input type="password" id="password" name="password" placeholder="Contraseña" required><br>
           <input type="submit" value="Login">

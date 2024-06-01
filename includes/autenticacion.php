@@ -1,7 +1,8 @@
 <?php
-session_start();
 
 require_once 'db-connection.php'; // Asegúrate de tener este archivo configurado correctamente
+
+
 
 if (!isset($_POST['username'], $_POST['password'])) {
     // Si no hay datos, redirigir al formulario de login
