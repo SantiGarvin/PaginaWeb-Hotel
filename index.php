@@ -102,7 +102,7 @@ if ($debug) {
 
     echo "<h3>Variables de sesión</h3>";
     echo "<pre>";
-    print_r(Session::get('name'));
+    print_r(Session::get('user'));
     print_r(Session::get('tipo_usuario'));
 }
 ?>
