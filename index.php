@@ -14,15 +14,14 @@ require_once 'mi-cuenta.php';
 require_once 'admin.php';
 require_once 'includes/Session.php';
 
-Session::init();
 
 // Simulación de tipos de usuario
 // Esto generalmente vendría de una base de datos o un sistema de autenticación
 // Los valores podrían ser 'anonimo', 'Cliente', 'Recepcionista', 'Administrador'
 Session::init();
 
-if (!Session::get('tipo_usuario')) {
-    Session::set('tipo_usuario', 'anonimo'); // Valor predeterminado
+if (!Session::get('user')) {
+    Session::set('user', ['tipo_usuario' => 'anonimo']); // Valor predeterminado
 }
 
 $tipo_usuario = Session::get('tipo_usuario');
@@ -103,7 +102,6 @@ if ($debug) {
     echo "<h3>Variables de sesión</h3>";
     echo "<pre>";
     print_r(Session::get('user'));
-    print_r(Session::get('tipo_usuario'));
 }
 ?>
 

@@ -10,7 +10,7 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
   $error = '';
   if(isset($_POST['username']) && isset($_POST['password'])){
     if(autenticacion()){
-      $username =  Session::get('username');
+      $user =  Session::get('user');
     }
     else{
       $error = 'Usuario o contraseña incorrectos';
@@ -18,7 +18,7 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
   }
   
   if(!Session::isSessionOpen()){
-    Session::set('name', $username);
+    Session::set('nombre', $username);
   }
 
 
@@ -32,7 +32,7 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
 
   //Html del aside
 
-  if(null !== Session::get('user') && Session::get('tipo_usuario') != 'anonimo'){
+  if(null !== Session::get('user') && Session::get('user')['tipo_usuario'] != 'anonimo'){
       $AUX .= <<<HTML
       <aside class="aside_login">
         <div class="login">
