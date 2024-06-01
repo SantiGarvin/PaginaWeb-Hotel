@@ -19,6 +19,8 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
   
   if(!Session::isSessionOpen()){
     Session::set('nombre', $username);
+  }else{
+    $nombreUsuario = Session::get('user')['nombre'];
   }
 
 
@@ -36,7 +38,7 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
       $AUX .= <<<HTML
       <aside class="aside_login">
         <div class="login">
-          <h2>Bienvenido, {$user['nombre']}</h2>
+        <h2>Bienvenido, {$nombreUsuario}</h2>
           <form action="./index.php" method="post">
             <input type="submit" value="Logout" name="logout" >
           </form>
