@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS Usuarios (
     email VARCHAR(50) NOT NULL UNIQUE,
     clave VARCHAR(255) NOT NULL,
     num_tarjeta_credito VARCHAR(16) NOT NULL,
-    rol ENUM('Administrador', 'Recepcionista', 'Cliente') NOT NULL
+    rol ENUM('Administrador', 'Recepcionista', 'Cliente', 'Anonimo') NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Habitaciones (

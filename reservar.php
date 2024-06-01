@@ -1,5 +1,50 @@
 <?php
+
+require_once 'includes/db-connection.php';
+
+function InsertarReserva($fecha_entrada, $fecha_salida, $capacidad)
+{
+    global $conn;
+
+    // Obtener id_cliente a partir del DNI
+    $sql = "SELECT id_usuario FROM Usuarios WHERE dni = '$capacidad'";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        $id_cliente = $result->fetch_assoc()['id_usuario'];
+    } else {
+        echo "No se encontró el usuario con DNI: $capacidad";
+        return;
+    }
+
+    // Obtener id_habitacion a partir del número de personas
+    $sql = "SELECT id_habitacion FROM Habitaciones WHERE capacidad >= $capacidad LIMIT 1";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        $id_habitacion = $result->fetch_assoc()['id_habitacion'];
+    } else {
+        echo "No se encontró una habitación con capacidad para $capacidad personas";
+        return;
+    }
+
+    // Insertar la reserva
+    $sql = "INSERT INTO Reservas (id_cliente, id_habitacion, num_personas, dia_entrada, dia_salida, estado) VALUES ($id_cliente, $id_habitacion, $capacidad, '$fecha_entrada', '$fecha_salida', 'Pendiente')";
+    if ($conn->query($sql) === TRUE) {
+        echo "Reserva creada correctamente";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+
+}
+
 function HTMLreservar() {
+    if (isset($_POST['enviar'])) {
+        $fecha_entrada = $_POST['fecha_entrada'];
+        $fecha_salida = $_POST['fecha_salida'];
+        $capacidad = $_POST['n-personas'];
+
+        InsertarReserva($fecha_entrada, $fecha_salida, $capacidad);
+    }
+
     return <<<HTML
     <main class="main-content">
         <form action="" method="POST" enctype="multipart/form-data">
@@ -25,7 +70,7 @@ function HTMLreservar() {
                     <div class="columna">
                         <label for="dni">
                             Cantidad de personas:
-                            <input type="text" id="dni" name="dni" placeholder="Nº de camas necesarias" required>
+                            <input type="text" id="dni" name="n-personas" placeholder="Nº de camas necesarias" required>
                         </label>
                     </div>
                 </div>

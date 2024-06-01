@@ -8,12 +8,14 @@ require_once 'servicios.php';
 require_once 'reservations.php';
 require_once 'registro.php';
 require_once 'reservar.php';
+require_once 'miCuenta.php';
+require_once 'admin.php';
 
 session_start();
 
 // Simulación de tipos de usuario
 // Esto generalmente vendría de una base de datos o un sistema de autenticación
-// Los valores podrían ser 'anonimo', 'registrado', 'recepcionista', 'administrador'
+// Los valores podrían ser 'anonimo', 'Cliente', 'Recepcionista', 'Administrador'
 if (!isset($_SESSION['tipo_usuario'])) {
     $_SESSION['tipo_usuario'] = 'anonimo'; // Valor predeterminado
 }
@@ -22,7 +24,7 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
 // Variables de DEBUG y simulación de usuario
 $debug = false;
-$tipo_usuario = 'anonimo'; // Simulación de usuario registrado
+$tipo_usuario = 'Administrador'; // Simulación de usuario Cliente
 
 // Variables con los datos del autor y los enlaces (información para el footer)
 $autores = "Diego Sánchez Vargas y Santiago Garvín Pérez";
@@ -40,12 +42,17 @@ $menu = [
 
 $itemsAdicionalesMenu = match ($tipo_usuario) {
     'anonimo'           => [['Registro', 'index.php?p=3']],
-    'registrado'        => [
+    'Cliente'        => [
         ['Reservar', 'index.php?p=5'],
         ['Mi cuenta', 'index.php?p=6']
     ],
-    'recepcionista'     => [['Recepcionista', 'index.php?p=4']],
-    'administrador'     => [['Admin', 'index.php?p=6']],
+    'Recepcionista'     => [['Recepcionista', 'index.php?p=4']],
+    'Administrador'     => [
+        ['Reservar', 'index.php?p=5'],
+        ['Mi cuenta', 'index.php?p=6'],
+        ['Recepcionista', 'index.php?p=4'],
+        ['Admin', 'index.php?p=7']
+    ],
     default             => []
 };
 
@@ -62,11 +69,11 @@ $cuerpo = match ($opc) {
     0 => HTMLpag_inicio(),
     1 => HTMLhabitaciones(),
     2 => HTMLservicios(),
-    3 => HTMLregistro(null, null),
-    4 => $tipo_usuario === 'recepcionista' || $tipo_usuario === 'administrador' ? HTMLreservations() : HTMLpag_error(),
-    5 => $tipo_usuario === 'registrado' ? HTMLreservar() : HTMLpag_error(),
-    // 6 => $tipo_usuario === 'registrado' ? HTMLmicuenta() : HTMLpag_error(),
-    // 7 => $tipo_usuario === 'administrador' ? HTMLadmin() : HTMLpag_error(),
+    3 => HTMLregistro(),
+    4 => $tipo_usuario === 'Recepcionista' || $tipo_usuario === 'Administrador' ? HTMLreservations() : HTMLpag_error(),
+    5 => $tipo_usuario === 'Cliente' || $tipo_usuario === 'Administrador' ? HTMLreservar() : HTMLpag_error(),
+    6 => $tipo_usuario === 'Cliente' || $tipo_usuario === 'Administrador' ? HTMLmicuenta() : HTMLpag_error(),
+    7 => $tipo_usuario === 'Administrador' || $tipo_usuario === 'Administrador' ? HTMLadmin() : HTMLpag_error(),
     default => HTMLpag_error()
 };
 
