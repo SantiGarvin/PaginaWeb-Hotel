@@ -1,12 +1,12 @@
 <?php
 require_once 'includes/header.php';
 require_once 'includes/footer.php';
-require_once 'includes/nav.php';
+require_once 'includes/navbar.php';
 require_once 'inicio.php';
 require_once 'room.php';
 require_once 'servicios.php';
 require_once 'reservations.php';
-require_once 'register.php';
+require_once 'registro.php';
 require_once 'reservar.php';
 
 session_start();
@@ -22,12 +22,10 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 
 // Variables de DEBUG y simulación de usuario
 $debug = false;
-$tipo_usuario = 'registrado'; // Simulación de usuario registrado
+$tipo_usuario = 'anonimo'; // Simulación de usuario registrado
 
 // Variables con los datos del autor y los enlaces (información para el footer)
-$autores = "Diego Sánchez Vargas y Santiago Garvin Pérez";
-$enlace = ".";
-$enlace2 = "";
+$autores = "Diego Sánchez Vargas y Santiago Garvín Pérez";
 
 $opc = 0;
 if (isset($_GET["p"]) && ($_GET["p"] >= 0 && $_GET["p"] <= 7)) {
@@ -57,14 +55,14 @@ $estilos = glob('css/*.css'); // Array con los estilos CSS
 $head = HTMLhead("Proyecto Final", $estilos);
 $header = HTMLheader();
 $menu = HTMLnavbar($menu, $opc, 'activo');
-$aside = HTMLaside(3, 2, 9, 5); //$totalHabitaciones, $habitacionesLibres, $capacidadTotal, $huespedesAlojados
-$footer = HTMLfooter($autores, $enlace, $enlace2);
+// $aside = HTMLaside(3, 2, 9, 5); //$totalHabitaciones, $habitacionesLibres, $capacidadTotal, $huespedesAlojados
+$footer = HTMLfooter($autores, ".", "");
 
 $cuerpo = match ($opc) {
     0 => HTMLpag_inicio(),
     1 => HTMLhabitaciones(),
     2 => HTMLservicios(),
-    3 => HTMLregistro(),
+    3 => HTMLregistro(null, null),
     4 => $tipo_usuario === 'recepcionista' || $tipo_usuario === 'administrador' ? HTMLreservations() : HTMLpag_error(),
     5 => $tipo_usuario === 'registrado' ? HTMLreservar() : HTMLpag_error(),
     // 6 => $tipo_usuario === 'registrado' ? HTMLmicuenta() : HTMLpag_error(),
@@ -95,9 +93,9 @@ if ($debug) {
 <body>
     <?= $header ?>
     <?= $menu ?>
-    <div class="content">
+    <div class="content-wrapper">
         <?= $cuerpo ?>
-        <?= $aside ?>
+        <!-- <?= $aside ?> -->
     </div>
     <?= $footer ?>
   </body>

@@ -1,14 +1,5 @@
 /* Contenido principal */
 
-.main-content {
-    max-width: 900px;
-    min-width: 580px;
-    margin: 10px 0 0 0;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 .main-content section {
     margin-bottom: 30px;
 }
@@ -84,7 +75,11 @@
 }
 
 .eventos ul li a:hover {
-    color: #0d47a1;
+    color: var(--accent-color)
+}
+
+.eventos ul li a:visited {
+    color: blueviolet;
 }
 
 @media screen and (max-width: 630px) {

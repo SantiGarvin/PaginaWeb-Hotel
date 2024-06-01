@@ -24,9 +24,9 @@ function HTMLpag_inicio()
 		<section class="eventos">
 			<h2>Eventos de interés</h2>
 			<ul>
-				<li><a href="https://granadafestival.org/">Festival Internacional de Música y Danza de Granada</a></li>
-				<li><a href="https://granadasound.com/">Festival de Música Electrónica Granada Sound</a></li>
-				<li><a href="https://www.festivaldecinegranada.com/">Festival de Cine de Granada</a></li>
+				<li><a href="https://granadafestival.org/" target="_blank">Festival Internacional de Música y Danza de Granada</a></li>
+				<li><a href="https://granadasound.com/" target="_blank">Festival de Música Electrónica Granada Sound</a></li>
+				<li><a href="https://www.festivaldecinegranada.com/" target="_blank">Festival de Cine de Granada</a></li>
 			</ul>
 		</section>
 	</main>
