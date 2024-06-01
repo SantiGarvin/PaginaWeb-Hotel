@@ -1,8 +1,19 @@
 <?php
 require_once 'includes/Session.php';
+require_once 'includes/autenticacion.php';
 
-Session::init();
 
+
+if(isset($_POST['username']) && isset($_POST['password'])){
+  autenticacion();
+  $username =  Session::get('name');
+}
+
+if(Session::isSessionOpen()){
+  $usuario = Session::get('usuario');
+}else{
+  Session::set('name', $username);
+}
 
 /**
  * Generar aside para login 
@@ -13,7 +24,7 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
   <aside class="aside_login">
       <div class="login">
         <h2>Sign in</h2>
-        <form action="includes/autenticacion.php" method="post">
+        <form action="" method="post">
           <input type="text" id="username" name="username" placeholder="Usuario" required><br>
           <input type="password" id="password" name="password" placeholder="Contraseña" required><br>
           <input type="submit" value="Login">
