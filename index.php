@@ -12,17 +12,20 @@ require_once 'registro.php';
 require_once 'reservar.php';
 require_once 'mi-cuenta.php';
 require_once 'admin.php';
+require_once 'includes/Session.php';
 
-session_start();
+Session::init();
 
 // Simulación de tipos de usuario
 // Esto generalmente vendría de una base de datos o un sistema de autenticación
 // Los valores podrían ser 'anonimo', 'Cliente', 'Recepcionista', 'Administrador'
-if (!isset($_SESSION['tipo_usuario'])) {
-    $_SESSION['tipo_usuario'] = 'anonimo'; // Valor predeterminado
+Session::init();
+
+if (!Session::get('tipo_usuario')) {
+    Session::set('tipo_usuario', 'anonimo'); // Valor predeterminado
 }
 
-$tipo_usuario = $_SESSION['tipo_usuario'];
+$tipo_usuario = Session::get('tipo_usuario');
 
 $error = '';
 if (isset($_GET['error']) && $_GET['error'] === 'invalid_credentials') {
