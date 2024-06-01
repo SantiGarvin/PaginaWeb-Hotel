@@ -7,16 +7,14 @@ function HTMLmicuenta()
 {
     global $conn;
 
-    $nombre = Session::get('user')['nombre'];
-    $apellidos = Session::get('user')['apellidos'];
-    $dni = Session::get('user')['dni'];
-    $email = Session::get('user')['email'];
-    $tarjeta = Session::get('user')['num_tarjeta_credito'];
-    $fecha_nacimiento = Session::get('user')['fecha_nacimiento'];
-    $nacionalidad = Session::get('user')['nacionalidad'];
-
-
-
+    $nombre = isset(Session::get('user')['nombre']) ? Session::get('user')['nombre'] : '';
+    $apellidos = isset(Session::get('user')['apellidos']) ? Session::get('user')['apellidos'] : '';
+    $dni = isset(Session::get('user')['dni']) ? Session::get('user')['dni'] : '';
+    $email = isset(Session::get('user')['email']) ? Session::get('user')['email'] : '';
+    $tarjeta = isset(Session::get('user')['num_tarjeta_credito']) ? Session::get('user')['num_tarjeta_credito'] : '';
+    $fecha_nacimiento = isset(Session::get('user')['fecha_nacimiento']) ? Session::get('user')['fecha_nacimiento'] : '';
+    $nacionalidad = isset(Session::get('user')['nacionalidad']) ? Session::get('user')['nacionalidad'] : '';
+    
 
     // Obtener reservas del usuario
     $sql = "SELECT id_reserva, dia_entrada, dia_salida FROM Reservas WHERE id_cliente = ?";
@@ -36,11 +34,11 @@ function HTMLmicuenta()
                             <td>{$row['dia_salida']}</td>
                             <td>
                                 <form method='post' action='cancelar_reserva.php'>
-                                    <input type='hidden' name='id' value='{$row['id']}'>
+                                    <input type='hidden' name='id' value='{$row['id_reserva']}'>
                                     <button type='submit' name='accion' value='cancelar'>Cancelar</button>
                                 </form>
                                 <form method='post' action='modificar_reserva.php'>
-                                    <input type='hidden' name='id' value='{$row['id']}'>
+                                    <input type='hidden' name='id' value='{$row['id_reserva']}'>
                                     <button type='submit' name='accion' value='modificar'>Modificar</button>
                                 </form>
                             </td>

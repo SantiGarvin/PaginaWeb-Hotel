@@ -35,7 +35,7 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
   //Html del aside
 
   if(null !== Session::get('user') && Session::get('user')['rol'] != 'anonimo'){
-      $AUX .= <<<HTML
+      $AUX = <<<HTML
       <aside class="aside_login">
         <div class="login">
         <h2>Bienvenido, {$nombreUsuario}</h2>
