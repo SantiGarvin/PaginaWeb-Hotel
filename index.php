@@ -31,7 +31,7 @@ $error = '';
 
 
 // Variables de DEBUG y simulación de usuario
-$debug = false;
+$debug = true;
 $tipo_usuario = 'Administrador'; // Simulación de usuario Cliente
 
 // Variables con los datos del autor y los enlaces (información para el footer)
@@ -102,7 +102,8 @@ if ($debug) {
 
     echo "<h3>Variables de sesión</h3>";
     echo "<pre>";
-    print_r(Session::get('username'));
+    print_r(Session::get('name'));
+    print_r(Session::get('tipo_usuario'));
 }
 ?>
 

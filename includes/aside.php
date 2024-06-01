@@ -22,9 +22,17 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
   }
 
 
+  if(isset($_POST['Logout'])){
+    Session::destroy();
+  }
+
+
+
+
+
   //Html del aside
 
-  if(Session::get('username') != ''){
+  if(null !== Session::get('name')){
       $AUX .= <<<HTML
       <aside class="aside_login">
         <div class="login">
@@ -57,7 +65,7 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
 
     if($error != ''){
       $AUX .= <<<HTML
-        <div class="error">
+        <div class="">
           <p>{$error}</p>
         </div>
       HTML;

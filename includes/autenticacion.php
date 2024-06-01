@@ -21,14 +21,12 @@ function autenticacion(){
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
     
-    if ($user && password_verify($password, $user['clave'])) {
+    if ($user && password_verify(password_hash($password, PASSWORD_DEFAULT), $user['clave'])) {
         // Credenciales válidas, actualizar la sesión
         Session::init();
         Session::set('tipo_usuario', $user['rol']);
         Session::set('user_id', $user['id_usuario']);
         Session::set('name', $username);
-        header('Location: index.php');
-        exit();
     } else {
         // Credenciales inválidas, redirigir con error
         return false;
