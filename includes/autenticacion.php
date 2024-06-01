@@ -3,6 +3,8 @@ require_once 'db-connection.php';
 require_once 'Session.php'; 
 
 function autenticacion(){
+    global $conn;
+
     if (!isset($_POST['username'], $_POST['password'])) {
         // No se enviaron los datos necesarios
         echo 'Por favor, complete ambos campos correctamente';
@@ -13,9 +15,11 @@ function autenticacion(){
     $password = $_POST['password'];
     
     // Consulta para verificar las credenciales del usuario
-    $stmt = $pdo->prepare('SELECT id_usuario, clave, rol FROM Usuarios WHERE email = :username');
-    $stmt->execute(['email' => $username]);
-    $user = $stmt->fetch();
+    $stmt = $conn->prepare('SELECT id_usuario, clave, rol FROM Usuarios WHERE email = ?');
+    $stmt->bind_param('s', $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
     
     if ($user && password_verify($password, $user['clave'])) {
         // Credenciales válidas, actualizar la sesión
