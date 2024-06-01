@@ -32,12 +32,12 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
 
   //Html del aside
 
-  if(null !== Session::get('user') && Session::get('user')['tipo_usuario'] != 'anonimo'){
+  if(null !== Session::get('user') && Session::get('user')['rol'] != 'anonimo'){
       $AUX .= <<<HTML
       <aside class="aside_login">
         <div class="login">
           <h2>Bienvenido, {$user['nombre']}</h2>
-          <form action="" method="post">
+          <form action="./index.php" method="post">
             <input type="submit" value="Logout" name="logout" >
           </form>
         <div class="info_hotel">

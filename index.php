@@ -21,17 +21,16 @@ require_once 'includes/Session.php';
 Session::init();
 
 if (!Session::get('user')) {
-    Session::set('user', ['tipo_usuario' => 'anonimo']); // Valor predeterminado
+    Session::set('user', ['rol' => 'anonimo']); // Valor predeterminado
 }
 
-$tipo_usuario = Session::get('tipo_usuario');
+$tipo_usuario = Session::get('user')['rol'];
 
 $error = '';
 
 
 // Variables de DEBUG y simulación de usuario
 $debug = true;
-$tipo_usuario = 'Administrador'; // Simulación de usuario Cliente
 
 // Variables con los datos del autor y los enlaces (información para el footer)
 $autores = "Diego Sánchez Vargas y Santiago Garvín Pérez";
