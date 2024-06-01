@@ -33,8 +33,7 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
 
 
 
-
-
+ç
   //Html del aside
 
   if(null !== Session::get('user') && Session::get('user')['rol'] != 'anonimo'){
