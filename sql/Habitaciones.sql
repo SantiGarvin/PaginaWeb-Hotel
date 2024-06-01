@@ -27,6 +27,8 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `Habitaciones`
 --
 
+DROP TABLE IF EXISTS `Habitaciones`;
+
 CREATE TABLE IF NOT EXISTS `Habitaciones` (
   `id_habitacion` int NOT NULL AUTO_INCREMENT,
   `numero` varchar(20) COLLATE utf8mb3_spanish_ci NOT NULL,
@@ -42,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `Habitaciones` (
 -- Volcado de datos para la tabla `Habitaciones`
 --
 
-INSERT INTO `Habitaciones` (`id_habitacion`, `numero`, `capacidad`, `precio_por_noche`, `descripcion`,`n-imagenes`) VALUES
+INSERT INTO `Habitaciones` (`id_habitacion`, `numero`, `capacidad`, `precio_por_noche`, `descripcion`, `n-imagenes`) VALUES
 (101, '101', 2, 25.5, '', 0),
 (102, '102', 2, 25.5, '', 0),
 (103, '103', 2, 25.5, '', 1),
@@ -53,9 +55,9 @@ INSERT INTO `Habitaciones` (`id_habitacion`, `numero`, `capacidad`, `precio_por_
 (203, '203', 3, 25.5, '', 3),
 (204, '204', 3, 25.5, '', 4),
 (301, '301', 4, 25.5, '', 4),
-(302, '302', 4, 25.5, '', ''),
-(1, 'Suite presidencial', 4, 25.5, '', ''),
-(2, 'Suite nupcial', 2, 25.5, '', '');
+(302, '302', 4, 25.5, '', 0),
+(1, 'Suite presidencial', 4, 25.5, '', 0),
+(2, 'Suite nupcial', 2, 25.5, '', 0);
 
 --
 -- Índices para tablas volcadas
@@ -63,17 +65,14 @@ INSERT INTO `Habitaciones` (`id_habitacion`, `numero`, `capacidad`, `precio_por_
 --
 -- Indices de la tabla `Habitaciones`
 --
-ALTER TABLE `Habitaciones`
-  ADD UNIQUE KEY `numero` (`numero`);
+
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
---
--- AUTO_INCREMENT de la tabla `Habitaciones`
---
 ALTER TABLE `Habitaciones`
-  MODIFY `id_habitacion` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_habitacion` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=303;
 COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

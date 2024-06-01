@@ -4,7 +4,7 @@ function HTMLregistro($datos = [], $errores = [])
     ob_start(); // Iniciar el buffer de salida
 ?>
     <main class="main-content">
-        <form action="procesar_registro.php" method="POST" enctype="multipart/form-data" novalidate>
+        <form action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data" novalidate>
             <input type="hidden" id="version_formulario" name="version_formulario" value="1.0">
 
             <fieldset class="datos-personales">
@@ -109,5 +109,3 @@ function HTMLregistro($datos = [], $errores = [])
 <?php
     return ob_get_clean(); // Obtener el contenido del buffer y limpiarlo
 }
-
-?>

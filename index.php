@@ -2,13 +2,15 @@
 require_once 'includes/header.php';
 require_once 'includes/footer.php';
 require_once 'includes/navbar.php';
+require_once 'includes/aside.php';
+require_once 'includes/pagina-error.php';
 require_once 'inicio.php';
 require_once 'room.php';
 require_once 'servicios.php';
 require_once 'reservations.php';
 require_once 'registro.php';
 require_once 'reservar.php';
-require_once 'miCuenta.php';
+require_once 'mi-cuenta.php';
 require_once 'admin.php';
 
 session_start();
@@ -21,6 +23,11 @@ if (!isset($_SESSION['tipo_usuario'])) {
 }
 
 $tipo_usuario = $_SESSION['tipo_usuario'];
+
+$error = '';
+if (isset($_GET['error']) && $_GET['error'] === 'invalid_credentials') {
+    $error = 'Usuario o contraseña incorrectos';
+}
 
 // Variables de DEBUG y simulación de usuario
 $debug = false;
@@ -62,7 +69,7 @@ $estilos = glob('css/*.css'); // Array con los estilos CSS
 $head = HTMLhead("Proyecto Final", $estilos);
 $header = HTMLheader();
 $menu = HTMLnavbar($menu, $opc, 'activo');
-// $aside = HTMLaside(3, 2, 9, 5); //$totalHabitaciones, $habitacionesLibres, $capacidadTotal, $huespedesAlojados
+$aside = HTMLaside(3, 2, 9, 5); //$totalHabitaciones, $habitacionesLibres, $capacidadTotal, $huespedesAlojados
 $footer = HTMLfooter($autores, ".", "");
 
 $cuerpo = match ($opc) {
@@ -96,14 +103,19 @@ if ($debug) {
 
 <!DOCTYPE html>
 <html>
-  <?= $head ?>
+<?= $head ?>
+
 <body>
     <?= $header ?>
     <?= $menu ?>
     <div class="content-wrapper">
+        <?php if ($error) : ?>
+            <p class="error"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
         <?= $cuerpo ?>
-        <!-- <?= $aside ?> -->
+        <?= $aside ?>
     </div>
     <?= $footer ?>
-  </body>
+</body>
+
 </html>
