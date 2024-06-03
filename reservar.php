@@ -305,7 +305,7 @@ function HTMLreservar() {
             
     HTML;
 
-    if (isset($_POST['accion']) && $_POST['accion'] == 'add-reserva' && checkUserRole_Recepcionista($_POST['id_rece']) {
+    if (isset($_POST['accion']) && $_POST['accion'] == 'add-reserva' && checkUserRole_Recepcionista($_POST['id_rece'])) {
         $AUX .= <<<HTML
             <fieldset class="datos-reserva">
                 <legend>Datos a meter unicamente por el recepcionista:</legend>    
