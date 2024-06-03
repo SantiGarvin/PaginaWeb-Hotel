@@ -10,19 +10,24 @@ CREATE TABLE IF NOT EXISTS Usuarios (
 );
 
 CREATE TABLE IF NOT EXISTS Habitaciones (
-    id_habitacion INT AUTO_INCREMENT PRIMARY KEY,
-    numero VARCHAR(10) NOT NULL UNIQUE,
-    capacidad INT NOT NULL,
-    precio_por_noche DECIMAL(10, 2) NOT NULL,
-    descripcion TEXT NOT NULL
-);
+    `id_habitacion` int NOT NULL AUTO_INCREMENT,
+    `numero` varchar(20) COLLATE utf8mb4_spanish_ci NOT NULL,
+    `capacidad` int NOT NULL,
+    `precio_por_noche` decimal(10, 2) NOT NULL,
+    `descripcion` text COLLATE utf8mb4_spanish_ci NOT NULL,
+    `n-imagenes` int NOT NULL,
+    PRIMARY KEY (`id_habitacion`),
+    UNIQUE KEY `numero` (`numero`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 CREATE TABLE IF NOT EXISTS Fotografias (
-    id_fotografia INT AUTO_INCREMENT PRIMARY KEY,
-    id_habitacion INT NOT NULL,
-    ruta_foto VARCHAR(255) NOT NULL,
-    FOREIGN KEY (id_habitacion) REFERENCES Habitaciones(id_habitacion)
-);
+    `id_fotografia` int NOT NULL AUTO_INCREMENT,
+    `id_habitacion` int NOT NULL,
+    `nombre_archivo` varchar(255) COLLATE utf8mb4_spanish_ci NOT NULL,
+    `imagen` blob NOT NULL,
+    PRIMARY KEY (`id_fotografia`),
+    FOREIGN KEY (`id_habitacion`) REFERENCES `Habitaciones`(`id_habitacion`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 CREATE TABLE IF NOT EXISTS Reservas (
     id_reserva INT AUTO_INCREMENT PRIMARY KEY,
@@ -34,6 +39,7 @@ CREATE TABLE IF NOT EXISTS Reservas (
     dia_salida DATE NOT NULL,
     estado ENUM('Pendiente', 'Confirmada', 'Mantenimiento') NOT NULL,
     marca_tiempo TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id_reserva`),
     FOREIGN KEY (id_cliente) REFERENCES Usuarios(id_usuario),
     FOREIGN KEY (id_habitacion) REFERENCES Habitaciones(id_habitacion)
 );

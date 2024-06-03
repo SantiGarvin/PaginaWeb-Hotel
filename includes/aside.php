@@ -17,9 +17,9 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
     }
   }
 
-  
-  
-  if(!Session::isSessionOpen()){
+
+
+  if (!Session::isSessionOpen()) {
     Session::set('nombre', $username);
   } else {
     $nombreUsuario = isset(Session::get('user')['nombre']) ? Session::get('user')['nombre'] : '';
@@ -39,7 +39,7 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
     return <<<HTML
       <aside class="aside_login">
         <div class="login">
-        <h2>Bienvenido, {$nombreUsuario}</h2>
+        <h2>Bienvenido/a, {$nombreUsuario}</h2>
           <form action="" method="post">
             <input type="submit" value="Logout" name="logout" >
           </form>
@@ -79,6 +79,6 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
       </div>
     </aside>
 <?php
-    return ob_get_clean(); // Obtener el contenido del buffer y limpiarlo  }
+    return ob_get_clean(); // Obtener el contenido del buffer y limpiarlo
   }
 }
