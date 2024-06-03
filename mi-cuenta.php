@@ -39,7 +39,7 @@ function HTMLmicuenta()
                                     <input type='hidden' name='id' value='{$row['id_reserva']}'>
                                     <button type='submit' name='accion' value='cancelar'>Cancelar</button>
                                 </form>
-                                <form method='post' action='modificar_reserva.php'>
+                                <form method='post' action='index.php?p=5'>
                                     <input type='hidden' name='id' value='{$row['id_reserva']}'>
                                     <button type='submit' name='accion' value='modificar'>Modificar</button>
                                 </form>
