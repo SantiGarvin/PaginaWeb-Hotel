@@ -86,10 +86,10 @@ function HTMLreservar() {
 
     if ($modificar) {
         $accion = 'modificar';
-        $disabled = 'readonly';
+        $readonly = 'readonly';
     } else {
         $accion = 'nuevo';
-        $disabled = '';
+        $readonly = '';
     }
 
 
@@ -135,12 +135,12 @@ function HTMLreservar() {
                     <div class="columna columna-nombre-apellidos">
                     <label for="fecha-nacimiento">
                             F. entrada:
-                            <input type="date" id="fecha-nacimiento" name="fecha_entrada" required $disabled value="$fecha_entrada">
+                            <input type="date" id="fecha-nacimiento" name="fecha_entrada" required $readonly value="$fecha_entrada">
                         </label>
     
                         <label for="fecha-nacimiento">
                             F. salida:
-                            <input type="date" id="fecha-nacimiento" name="fecha_salida" required $disabled value="$fecha_salida">
+                            <input type="date" id="fecha-nacimiento" name="fecha_salida" required $readonly value="$fecha_salida">
                         </label>
                     </div>
                 </div>
@@ -148,7 +148,7 @@ function HTMLreservar() {
                     <div class="columna">
                         <label for="dni">
                             Cantidad de personas:
-                            <input type="text" id="dni" name="n-personas" placeholder="Nº de camas necesarias" required $disabled value="$capacidad">
+                            <input type="text" id="dni" name="n-personas" placeholder="Nº de camas necesarias" required $readonly value="$capacidad">
                         </label>
                     </div>
                 </div>
