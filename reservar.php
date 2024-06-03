@@ -120,6 +120,19 @@ function BuscarHabitacion($capacidad, $fecha_inicio, $fecha_fin)
     }
 }
 
+function checkUserRole_Recepcionista($id_usuario) {
+    global $conn;
+
+    $sql = "SELECT COUNT(*) AS total FROM Usuarios WHERE id_usuario = $id_usuario AND rol = 'Recepcionista'";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['total'] > 0;
+    } else {
+        return false;
+    }
+}
+
 function obtenerNumeroHabitacion($id_habitacion) {
     global $conn;
 
@@ -174,6 +187,7 @@ function HTMLreservar() {
     $reserva_creada = '';
     $modificar = false;
     $id_usuario_manual = null;
+    $id_recepcionista = false;
 
     if(isset($_POST['id'])){
         $id_modificacion = $_POST['id'];
@@ -291,7 +305,22 @@ function HTMLreservar() {
             
     HTML;
 
-
+    if (isset($_POST['accion']) && $_POST['accion'] == 'add-reserva' && checkUserRole_Recepcionista($_POST['id_rece']) {
+        $AUX .= <<<HTML
+            <fieldset class="datos-reserva">
+                <legend>Datos a meter unicamente por el recepcionista:</legend>    
+                <div class="fila">
+                    <div class="columna columna-nombre-apellidos">
+                        <label for="id_usuario_manual">
+                            ID Usuario:
+                            <input type="text" id="id_usuario_manual" name="id_usuario_manual" required value="$id_usuario_manual">
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        HTML;
+    }
+    
 
     $AUX .= <<<HTML
 
