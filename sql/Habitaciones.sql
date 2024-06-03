@@ -27,15 +27,16 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `Habitaciones`
 --
 
-CREATE TABLE IF NOT EXISTS `Habitaciones` (
-  `id_habitacion` int NOT NULL AUTO_INCREMENT,
-  `numero` varchar(20) COLLATE utf8mb4_spanish_ci NOT NULL,
-  `capacidad` int NOT NULL,
-  `precio_por_noche` decimal(10, 2) NOT NULL,
-  `descripcion` text COLLATE utf8mb4_spanish_ci NOT NULL,
-  `n-imagenes` int NOT NULL,
-  PRIMARY KEY (`id_habitacion`),
-  UNIQUE KEY `numero` (`numero`)
+CREATE TABLE IF NOT EXISTS Habitaciones (
+    `id_habitacion` int NOT NULL AUTO_INCREMENT,
+    `numero` varchar(20) COLLATE utf8mb4_spanish_ci NOT NULL,
+    `capacidad` int NOT NULL,
+    `precio_por_noche` decimal(10, 2) NOT NULL,
+    `descripcion` text COLLATE utf8mb4_spanish_ci NOT NULL,
+    `n-imagenes` int NOT NULL,
+    `estado` ENUM('Operativa', 'Pendiente', 'Confirmada', 'Mantenimiento') NOT NULL DEFAULT 'Operativa',
+    PRIMARY KEY (`id_habitacion`),
+    UNIQUE KEY `numero` (`numero`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 --
@@ -49,20 +50,20 @@ COMMIT;
 -- Volcado de datos para la tabla `Habitaciones`
 --
 
-INSERT INTO `Habitaciones` (`id_habitacion`, `numero`, `capacidad`, `precio_por_noche`, `descripcion`, `n-imagenes`) VALUES
-(101, '101', 2, 25.5, '', 0),
-(102, '102', 2, 25.5, '', 0),
-(103, '103', 2, 25.5, '', 1),
-(104, '104', 2, 25.5, '', 1),
-(105, '105', 2, 25.5, '', 2),
-(201, '201', 3, 25.5, '', 2),
-(202, '202', 3, 25.5, '', 3),
-(203, '203', 3, 25.5, '', 3),
-(204, '204', 3, 25.5, '', 4),
-(301, '301', 4, 25.5, '', 4),
-(302, '302', 4, 25.5, '', 0),
-(1, 'Suite presidencial', 4, 25.5, '', 0),
-(2, 'Suite nupcial', 2, 25.5, '', 0);
+INSERT INTO `Habitaciones` (`id_habitacion`, `numero`, `capacidad`, `precio_por_noche`, `descripcion`, `n-imagenes`, `estado`) VALUES
+(101, '101', 2, 25.5, '', 0, 'Operativa'),
+(102, '102', 2, 25.5, '', 0, 'Operativa'),
+(103, '103', 2, 25.5, '', 1, 'Operativa'),
+(104, '104', 2, 25.5, '', 1, 'Operativa'),
+(105, '105', 2, 25.5, '', 2, 'Operativa'),
+(201, '201', 3, 25.5, '', 2, 'Operativa'),
+(202, '202', 3, 25.5, '', 3, 'Operativa'),
+(203, '203', 3, 25.5, '', 3, 'Operativa'),
+(204, '204', 3, 25.5, '', 4, 'Operativa'),
+(301, '301', 4, 25.5, '', 4, 'Operativa'),
+(302, '302', 4, 25.5, '', 0, 'Operativa'),
+(1, 'Suite presidencial', 4, 25.5, '', 0, 'Operativa'),
+(2, 'Suite nupcial', 2, 25.5, '', 0, 'Operativa');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -52,7 +52,11 @@ $itemsAdicionalesMenu = match ($tipo_usuario) {
         ['Reservar', 'index.php?p=5'],
         ['Mi cuenta', 'index.php?p=6']
     ],
-    'Recepcionista'     => [['Recepcionista', 'index.php?p=4']],
+    'Recepcionista'     => [
+        ['Reservar', 'index.php?p=5'],
+        ['Mi cuenta', 'index.php?p=6'],
+        ['Recepcionista', 'index.php?p=4']
+    ],
     'Administrador'     => [
         ['Reservar', 'index.php?p=5'],
         ['Mi cuenta', 'index.php?p=6'],
@@ -77,9 +81,9 @@ $cuerpo = match ($opc) {
     2 => HTMLservicios(),
     3 => HTMLregistro(),
     4 => $tipo_usuario === 'Recepcionista' || $tipo_usuario === 'Administrador' ? HTMLreservations() : HTMLpag_error(),
-    5 => $tipo_usuario === 'Cliente' || $tipo_usuario === 'Administrador' ? HTMLreservar() : HTMLpag_error(),
-    6 => $tipo_usuario === 'Cliente' || $tipo_usuario === 'Administrador' ? HTMLmicuenta() : HTMLpag_error(),
-    7 => $tipo_usuario === 'Administrador' || $tipo_usuario === 'Administrador' ? HTMLadmin() : HTMLpag_error(),
+    5 => $tipo_usuario === 'Cliente' || $tipo_usuario === 'Recepcionista' || $tipo_usuario === 'Administrador' ? HTMLreservar() : HTMLpag_error(),
+    6 => $tipo_usuario === 'Cliente' || $tipo_usuario === 'Recepcionista' || $tipo_usuario === 'Administrador' ? HTMLmicuenta() : HTMLpag_error(),
+    7 => $tipo_usuario === 'Administrador' ? HTMLadmin() : HTMLpag_error(),
     default => HTMLpag_error()
 };
 

@@ -15,7 +15,11 @@ CREATE TABLE IF NOT EXISTS Habitaciones (
     `capacidad` int NOT NULL,
     `precio_por_noche` decimal(10, 2) NOT NULL,
     `descripcion` text COLLATE utf8mb4_spanish_ci NOT NULL,
+<<<<<<< HEAD
     `n-imagenes` int NOT NULL,
+=======
+    `estado` ENUM('Operativa', 'Pendiente', 'Confirmada', 'Mantenimiento') NOT NULL DEFAULT 'Operativa',
+>>>>>>> 88a856477b88bddf4cab040bd2a3d050bcf00d59
     PRIMARY KEY (`id_habitacion`),
     UNIQUE KEY `numero` (`numero`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
