@@ -22,29 +22,80 @@ function ValidarReserva($fecha_entrada, $fecha_salida, $capacidad)
     return $errores ? $errores : true;
 }
 
-
-function InsertarReserva($fecha_entrada, $fecha_salida, $capacidad ,$comentario ,$id_usuario)
+function BuscarHabitacion($capacidad)
 {
     global $conn;
 
-    // Obtener id_habitacion a partir del número de personas
-    $sql = "SELECT id_habitacion FROM Habitaciones WHERE capacidad >= $capacidad LIMIT 1";
+    $sql = "SELECT id_habitacion, numero, precio_noche FROM Habitaciones 
+            WHERE capacidad >= $capacidad 
+            AND estado = 'Operativa' 
+            AND id_habitacion NOT IN (
+                SELECT id_habitacion FROM Reservas 
+                WHERE estado IN ('Pendiente', 'Confirmada')
+            )
+            ORDER BY capacidad ASC
+            LIMIT 1";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
-        $id_habitacion = $result->fetch_assoc()['id_habitacion'];
+        return $result->fetch_assoc();
     } else {
-        echo "No se encontró una habitación con capacidad para $capacidad personas";
+        // Ver si hay alguna habitacion disponible 
+        $sql = "SELECT id_habitacion, numero, precio_noche FROM Habitaciones 
+                WHERE estado = 'Operativa' 
+                AND id_habitacion NOT IN (
+                    SELECT id_habitacion FROM Reservas 
+                    WHERE estado IN ('Pendiente', 'Confirmada')
+                )";
+        $result = $conn->query($sql);
+        if ($result->num_rows > 0) {
+            // Hay disponibles pero no con la capacidad requerida
+            return 'capacidad_insuficiente';
+        } else {
+            // No hay habitaciones disponibles
+            return 'no_disponible';
+        }
+    }
+}
+
+function obtenerNumeroHabitacion($id_habitacion) {
+    global $conn;
+
+    $sql = "SELECT numero FROM Habitaciones WHERE id_habitacion = $id_habitacion LIMIT 1";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['numero'];
+    } else {
+        echo "No se encontró una habitación con el id $id_habitacion";
         return;
     }
+}
+
+function obtenerIdHabitacion($numero_habitacion) {
+    global $conn;
+
+    $sql = "SELECT id_habitacion FROM Habitaciones WHERE numero = $numero_habitacion LIMIT 1";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['id_habitacion'];
+    } else {
+        echo "No se encontró una habitación con el número $numero_habitacion";
+        return;
+    }
+}
+
+function InsertarReserva($id_habitacion, $num_personas, $comentarios, $dia_entrada, $dia_salida, $id_usuario) {
+    global $conn;
 
     // Insertar la reserva
-    $sql = "INSERT INTO Reservas (id_cliente, id_habitacion, num_personas, comentarios, dia_entrada, dia_salida, estado) VALUES ($id_usuario, $id_habitacion, $capacidad, '$comentario', '$fecha_entrada', '$fecha_salida', 'Pendiente')";    if ($conn->query($sql) === TRUE) {
+    $sql = "INSERT INTO Reservas (id_cliente, id_habitacion, num_personas, comentarios, dia_entrada, dia_salida, estado) 
+            VALUES ($id_usuario, $id_habitacion, $num_personas, '$comentarios', '$dia_entrada', '$dia_salida', 'Pendiente')";    
+    if ($conn->query($sql) === TRUE) {
         //echo "Reserva creada correctamente";
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
-
 }
+
 
 function HTMLreservar() {
     global $conn;
@@ -56,6 +107,7 @@ function HTMLreservar() {
     $comentarios = '';
     $errorDiv = '';
     $boton = "Enviar datos";
+    $reserva_en_proceso = [];
     $reserva_creada = '';
     $modificar = false;
 
@@ -113,15 +165,19 @@ function HTMLreservar() {
         }else{
             $validacion = ValidarReserva($fecha_entrada, $fecha_salida, $capacidad);
             if($validacion === true){
-                InsertarReserva($fecha_entrada, $fecha_salida, $capacidad, $comentarios, Session::get('user')['id_usuario']);
-                $reserva_creada = '<div class="error">Reserva creada correctamente</div>';        }else{
+
+                $reserva_en_proceso = BuscarHabitacion($capacidad);
+
+                InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, Session::get('user')['id_usuario']);
+                $reserva_creada = '<div class="error">Reserva creada correctamente</div>';        
+            }else{
                 $error_div = '<div class="error">' . nl2br($validacion) . '</div>';
                 $boton = "Reintenta enviar datos";
             }
         }
     }
 
-    return <<<HTML
+    $AUX = <<<HTML
     <main class="main-content">
         <form action="" method="POST" enctype="multipart/form-data" novalidate>
             <input type="hidden" id="version_formulario" name="version_formulario" value="1.0">
@@ -165,11 +221,39 @@ function HTMLreservar() {
                         Comentarios:
                         <textarea id="comentarios" name="comentarios" rows="4" cols="50" placeholder="Escriba aquí sus comentarios">$comentarios</textarea>
                     </label>
-            
+                </div>
+            </fieldset>
+    HTML;
+
+    if (isset($reserva_en_proceso['numero']) && isset($reserva_en_proceso['precio_noche'])) {
+        $AUX .= <<<HTML
+        <fieldset class="datos-habitacion">
+            <legend>Datos de la habitación</legend>
+
+            <div class="fila">
+                <div class="columna">
+                    <label>
+                        Número de habitación:
+                        <input type="text" value="{$reserva_en_proceso['numero']}" readonly>
+                    </label>
+
+                    <label>
+                        Precio por noche:
+                        <input type="text" value="{$reserva_en_proceso['precio_noche']}" readonly>
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+        HTML;
+    }
+
+    $AUX .= <<<HTML
             <input type="submit" name="enviar" value= "$boton">
             $reserva_creada
         </form>
     </main>
     HTML;
+
+    return $AUX;
 }
 ?>
