@@ -86,10 +86,10 @@ function HTMLreservar() {
 
     if ($modificar) {
         $accion = 'modificar';
-        $disabled = 'readonly';
+        $readonly = 'readonly';
     } else {
         $accion = 'nuevo';
-        $disabled = '';
+        $readonly = '';
     }
 
 
