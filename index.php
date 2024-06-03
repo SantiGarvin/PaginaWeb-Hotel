@@ -105,6 +105,9 @@ if ($debug) {
     echo "<h3>Variables de sesión</h3>";
     echo "<pre>";
     print_r(Session::get('user'));
+    echo "</pre>";
+    print_r(Session::getAll());
+    echo "<h3>Variables de sesión</h3>";
 }
 ?>
 

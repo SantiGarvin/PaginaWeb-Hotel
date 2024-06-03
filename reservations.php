@@ -1,57 +1,62 @@
-<!-- function HTMLreservations() {
-    return <<<HTML
-        <head>
-        <link rel="stylesheet" href="css/styles-reservas.css">
-        </head>
-        <main class="main-content">
-            <h2>Estado de Reservas</h2>
-            <div class="reservations">
-                <div class="reservation">
-                    <div class="reservation__id">1234</div>
-                    <div class="reservation__name"><strong>Juan Pérez</strong></div>
-                    <div class="reservation__room-type">Doble</div>
-                    <div class="reservation__arrival-date">2024-08-01</div>
-                    <div class="reservation__departure-date">2024-08-05</div>
-                    <div class="reservation__status confirmed">Confirmada</div>
-                </div>
-                <div class="reservation">
-                    <div class="reservation__id">2345</div>
-                    <div class="reservation__name"><strong>María González</strong></div>
-                    <div class="reservation__room-type">Individual</div>
-                    <div class="reservation__arrival-date">2024-08-03</div>
-                    <div class="reservation__departure-date">2024-08-07</div>
-                    <div class="reservation__status pending">Pendiente</div>
-                </div>
-                <div class="reservation">
-                    <div class="reservation__id">3456</div>
-                    <div class="reservation__name"><strong>Carlos Ruiz</strong></div>
-                    <div class="reservation__room-type">Suite</div>
-                    <div class="reservation__arrival-date">2024-08-10</div>
-                    <div class="reservation__departure-date">2024-08-14</div>
-                    <div class="reservation__status confirmed">Confirmada</div>
-                </div>
-                <div class="reservation">
-                    <div class="reservation__id">4567</div>
-                    <div class="reservation__name"><strong>Laura Torres</strong></div>
-                    <div class="reservation__room-type">Doble</div>
-                    <div class="reservation__arrival-date">2024-08-15</div>
-                    <div class="reservation__departure-date">2024-08-20</div>
-                    <div class="reservation__status pending">Pendiente</div>
-                </div>
-                <div class="reservation">
-                    <div class="reservation__id">5678</div>
-                    <div class="reservation__name"><strong>Andrés Gómez</strong></div>
-                    <div class="reservation__room-type">Individual</div>
-                    <div class="reservation__arrival-date">2024-08-22</div>
-                    <div class="reservation__departure-date">2024-08-25</div>
-                    <div class="reservation__status cancelled">Cancelada</div>
-                </div>
-            </div>
-        </main>
-    HTML;
-} -->
-
 <?php
+
+function NHabitacionesLibres() {
+    global $conn;
+
+    $fecha_actual = date('Y-m-d');
+
+    $sql = "SELECT COUNT(*) AS total FROM Habitaciones 
+            WHERE estado = 'Operativa' 
+            AND id_habitacion NOT IN (
+                SELECT id_habitacion FROM Reservas 
+                WHERE '$fecha_actual' BETWEEN dia_entrada AND dia_salida
+                AND estado IN ('Pendiente', 'Confirmada')
+            )";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['total'];
+    } else {
+        return 0;
+    }
+}
+
+function NHabitaciones() {
+    global $conn;
+
+    $sql = "SELECT COUNT(*) AS total FROM Habitaciones";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['total'];
+    } else {
+        return 0;
+    }
+}
+
+function CapacidadTotal() {
+    global $conn;
+
+    $sql = "SELECT SUM(capacidad) AS total FROM Habitaciones";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['total'];
+    } else {
+        return 0;
+    }
+}
+
+function NHuespedesAlojados() {
+    global $conn;
+
+    $sql = "SELECT SUM(num_personas) AS total FROM Reservas WHERE estado = 'Confirmada'";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['total'];
+    } else {
+        return 0;
+    }
+}
+
+
 
 function HTMLreservations() {
     ob_start();
@@ -350,13 +355,13 @@ function addReservationForm()
 function viewReservations()
 {
     global $conn;
-    $sql = "SELECT r.id_reserva, u.nombre, u.apellidos, h.numero, r.dia_entrada, r.dia_salida, r.estado FROM Reservas r
+    $sql = "SELECT r.id_reserva, u.nombre, u.apellidos, h.numero, r.num_personas, r.dia_entrada, r.dia_salida, r.estado FROM Reservas r
             JOIN Usuarios u ON r.id_cliente = u.id_usuario
             JOIN Habitaciones h ON r.id_habitacion = h.id_habitacion";
     $result = $conn->query($sql);
-    $output = "<h2>Lista de Reservas</h2><table><tr><th>ID</th><th>Cliente</th><th>Habitación</th><th>Día de Entrada</th><th>Día de Salida</th><th>Estado</th><th>Acciones</th></tr>";
+    $output = "<h2>Lista de Reservas</h2><table><tr><th>ID</th><th>Cliente</th><th>Habitación</th><th>Número de Personas</th><th>Día de Entrada</th><th>Día de Salida</th><th>Estado</th><th>Acciones</th></tr>";
     while ($row = $result->fetch_assoc()) {
-        $output .= "<tr><td>{$row['id_reserva']}</td><td>{$row['nombre']} {$row['apellidos']}</td><td>{$row['numero']}</td><td>{$row['dia_entrada']}</td><td>{$row['dia_salida']}</td><td>{$row['estado']}</td>";
+        $output .= "<tr><td>{$row['id_reserva']}</td><td>{$row['nombre']} {$row['apellidos']}</td><td>{$row['numero']}</td><td>{$row['num_personas']}</td><td>{$row['dia_entrada']}</td><td>{$row['dia_salida']}</td><td>{$row['estado']}</td>";
         $output .= "<td><a href='?p=4&action=edit_reservation&id={$row['id_reserva']}'>Editar</a> | <a href='?p=4&action=delete_reservation&id={$row['id_reserva']}'>Eliminar</a></td></tr>";
     }
     $output .= "</table>";

@@ -17,8 +17,7 @@ function HTMLmicuenta()
     
 
     // Obtener reservas del usuario
-    $sql = "SELECT id_reserva, dia_entrada, dia_salida, estado, comentarios FROM Reservas WHERE id_cliente = ?";
-    $stmt = $conn->prepare($sql);
+    $sql = "SELECT id_reserva, dia_entrada, dia_salida, estado, comentarios, num_personas FROM Reservas WHERE id_cliente = ?";    $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", Session::get('user')['id_usuario']);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -34,6 +33,7 @@ function HTMLmicuenta()
                             <td>{$row['dia_salida']}</td>
                             <td>{$row['estado']}</td>
                             <td>{$row['comentarios']}</td>
+                            <td>{$row['num_personas']}</td>
                             <td>
                                 <form method='post' action=''>
                                     <input type='hidden' name='id' value='{$row['id_reserva']}'>
@@ -151,6 +151,7 @@ function HTMLmicuenta()
                         <th>Fecha Out</th>
                         <th>Estado</th>
                         <th>Comentarios</th>
+                        <th>Personas</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>

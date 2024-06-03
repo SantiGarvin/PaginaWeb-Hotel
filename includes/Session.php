@@ -35,7 +35,10 @@ class Session{
     $_SESSION[$key] = $val;
   }
 
-
+  // Session Get Method todos los datos
+  public static function getAll(){
+    return $_SESSION;
+  }
 
   // Session Get Method
   public static function get($key){

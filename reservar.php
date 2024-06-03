@@ -3,63 +3,6 @@
 require_once 'includes/db-connection.php';
 require_once 'includes/Session.php';
 
-function NHabitacionesLibres() {
-    global $conn;
-
-    $fecha_actual = date('Y-m-d');
-
-    $sql = "SELECT COUNT(*) AS total FROM Habitaciones 
-            WHERE estado = 'Operativa' 
-            AND id_habitacion NOT IN (
-                SELECT id_habitacion FROM Reservas 
-                WHERE '$fecha_actual' BETWEEN dia_entrada AND dia_salida
-                AND estado IN ('Pendiente', 'Confirmada')
-            )";
-    $result = $conn->query($sql);
-    if ($result->num_rows > 0) {
-        return $result->fetch_assoc()['total'];
-    } else {
-        return 0;
-    }
-}
-
-function NHabitaciones() {
-    global $conn;
-
-    $sql = "SELECT COUNT(*) AS total FROM Habitaciones";
-    $result = $conn->query($sql);
-    if ($result->num_rows > 0) {
-        return $result->fetch_assoc()['total'];
-    } else {
-        return 0;
-    }
-}
-
-function CapacidadTotal() {
-    global $conn;
-
-    $sql = "SELECT SUM(capacidad) AS total FROM Habitaciones";
-    $result = $conn->query($sql);
-    if ($result->num_rows > 0) {
-        return $result->fetch_assoc()['total'];
-    } else {
-        return 0;
-    }
-}
-
-function NHuespedesAlojados() {
-    global $conn;
-
-    $sql = "SELECT COUNT(*) AS total FROM Reservas WHERE estado = 'Confirmada'";
-    $result = $conn->query($sql);
-    if ($result->num_rows > 0) {
-        return $result->fetch_assoc()['total'];
-    } else {
-        return 0;
-    }
-}
-
-
 function ValidarReserva($fecha_entrada, $fecha_salida, $capacidad)
 {
     $errores = "";
@@ -112,10 +55,10 @@ function BuscarHabitacion($capacidad, $fecha_inicio, $fecha_fin)
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             // Hay disponibles pero no con la capacidad requerida
-            return 'capacidad_insuficiente';
+            return "No quedan habitaciones disponibles con la capacidad insuficiente, reduce la cantidad de personas.";
         } else {
             // No hay habitaciones disponibles
-            return 'no_disponible';
+            return "No quedan habitaciones disponibles";
         }
     }
 }
@@ -214,9 +157,9 @@ function HTMLreservar() {
         }
     }
 
+
     if ($modificar) {
         $accion = 'modificar';
-        $readonly = 'readonly';
         $readonly = 'readonly';
     } else {
         $accion = 'nuevo';
@@ -228,6 +171,8 @@ function HTMLreservar() {
         $fecha_salida = $_POST['fecha_salida'];
         $capacidad = $_POST['n-personas'];
         $comentarios = $_POST['comentarios'];
+        $id_usuario_manual = $_POST['id_usuario_manual'];
+
         
         if ($_POST['accion'] == 'modificar') {
         
@@ -245,12 +190,14 @@ function HTMLreservar() {
                 $reserva_en_proceso = BuscarHabitacion($capacidad, $fecha_entrada, $fecha_salida);
 
                 if (is_array($reserva_en_proceso)) {
+                    $readonly = 'readonly';
 
-                    if($_POST['accion'] == 'add-reserva'){
-                        $id_usuario_manual = $_POST['id_usuario_manual'];
+                    if(Session::get('id_recepcionista')){
                         InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, $id_usuario_manual );
+                        echo "Reserva creada correctamente DESDE RECEPCIONISTA";
                     }else{
                         InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, Session::get('user')['id_usuario']);
+                        echo "Reserva creada correctamente DESDE NORMAL";
                     } 
                     Session::set('id_reserva_reciente', $conn->insert_id); // Guardar el ID de la reserva recién insertada
                     $reserva_creada = '<div class="error">Reserva creada correctamente</div>';  
@@ -275,6 +222,7 @@ function HTMLreservar() {
         if ($conn->query($sql) === TRUE) {
             $reserva_creada = '<div class="error">Reserva confirmada correctamente</div>';
             Session::set('id_reserva_reciente', null); // Limpiar la variable de sesión
+            Session::set('id_recepcionista', null); // Limpiar la variable de sesión
         } else {
             $error_div = '<div class="error">Error al confirmar la reserva</div>';
         }
@@ -289,12 +237,16 @@ function HTMLreservar() {
         if ($conn->query($sql) === TRUE) {
             $reserva_creada = '<div class="error">Reserva cancelada correctamente</div>';
             Session::set('id_reserva_reciente', null); // Limpiar la variable de sesión
+            Session::set('id_recepcionista', null); // Limpiar la variable de sesión
         } else {
             $error_div = '<div class="error">Error al cancelar la reserva</div>';
         }
     }
     
-
+    if (isset($_POST['accion']) && $_POST['accion'] == 'add-reserva') {
+        $id_recepcionista = checkUserRole_Recepcionista($_POST['id_rece']);
+        Session::set('id_recepcionista', $id_recepcionista);
+    }
 
 
     $AUX = <<<HTML
@@ -305,7 +257,7 @@ function HTMLreservar() {
             
     HTML;
 
-    if (isset($_POST['accion']) && $_POST['accion'] == 'add-reserva' && checkUserRole_Recepcionista($_POST['id_rece'])) {
+    if (Session::get('id_recepcionista')) {
         $AUX .= <<<HTML
             <fieldset class="datos-reserva">
                 <legend>Datos a meter unicamente por el recepcionista:</legend>    
@@ -313,7 +265,7 @@ function HTMLreservar() {
                     <div class="columna columna-nombre-apellidos">
                         <label for="id_usuario_manual">
                             ID Usuario:
-                            <input type="text" id="id_usuario_manual" name="id_usuario_manual" required value="$id_usuario_manual">
+                            <input type="text" id="id_usuario_manual" name="id_usuario_manual" required $readonly value="$id_usuario_manual">
                         </label>
                     </div>
                 </div>
