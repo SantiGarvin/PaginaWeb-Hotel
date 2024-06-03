@@ -17,6 +17,8 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
       $error = 'Usuario o contraseña incorrectos';
     }
   }
+
+  
   
   if(!Session::isSessionOpen()){
     Session::set('nombre', $username);

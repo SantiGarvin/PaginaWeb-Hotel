@@ -17,7 +17,7 @@ function HTMLmicuenta()
     
 
     // Obtener reservas del usuario
-    $sql = "SELECT id_reserva, dia_entrada, dia_salida FROM Reservas WHERE id_cliente = ?";
+    $sql = "SELECT id_reserva, dia_entrada, dia_salida, estado, comentarios FROM Reservas WHERE id_cliente = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", Session::get('user')['id_usuario']);
     $stmt->execute();
@@ -32,8 +32,10 @@ function HTMLmicuenta()
                             <td>{$row['id_reserva']}</td>
                             <td>{$row['dia_entrada']}</td>
                             <td>{$row['dia_salida']}</td>
+                            <td>{$row['estado']}</td>
+                            <td>{$row['comentarios']}</td>
                             <td>
-                                <form method='post' action='cancelar_reserva.php'>
+                                <form method='post' action=''>
                                     <input type='hidden' name='id' value='{$row['id_reserva']}'>
                                     <button type='submit' name='accion' value='cancelar'>Cancelar</button>
                                 </form>
@@ -45,8 +47,22 @@ function HTMLmicuenta()
                         </tr>";
     }
 
-    $stmt->close();
-    $conn->close();
+    //Funcion para cancelar reserva
+    if (isset($_POST['accion']) && $_POST['accion'] == 'cancelar') {
+        $id_reserva = $_POST['id'];
+        $sql = "DELETE FROM Reservas WHERE id_reserva = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $id_reserva);
+        $stmt->execute();
+        $stmt->close();
+        header('Location: ' . $_SERVER['REQUEST_URI']);
+    }
+
+    //Funcion para modificar reserva
+    if (isset($_POST['accion']) && $_POST['accion'] == 'modificar') {
+        $id_reserva = $_POST['id'];
+    }
+
 
     return <<<HTML
     <main class="main-content">
@@ -133,6 +149,8 @@ function HTMLmicuenta()
                         <th>ID Reserva</th>
                         <th>Fecha In</th>
                         <th>Fecha Out</th>
+                        <th>Estado</th>
+                        <th>Comentarios</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>

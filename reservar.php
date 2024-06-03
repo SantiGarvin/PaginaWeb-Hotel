@@ -3,6 +3,26 @@
 require_once 'includes/db-connection.php';
 require_once 'includes/Session.php';
 
+function ValidarReserva($fecha_entrada, $fecha_salida, $capacidad)
+{
+    $errores = "";
+
+    if ($fecha_entrada < date('Y-m-d')) {
+        $errores .= "La fecha de entrada no puede ser anterior a la fecha actual. \n";
+    }
+
+    if ($fecha_salida < $fecha_entrada) {
+        $errores .= "La fecha de salida no puede ser anterior a la fecha de entrada. \n";
+    }
+
+    if ($capacidad <= 0) {
+        $errores .= "La capacidad debe ser mayor que 0. \n";
+    }
+
+    return $errores ? $errores : true;
+}
+
+
 function InsertarReserva($fecha_entrada, $fecha_salida, $capacidad , $id_usuario)
 {
     global $conn;
@@ -20,7 +40,7 @@ function InsertarReserva($fecha_entrada, $fecha_salida, $capacidad , $id_usuario
     // Insertar la reserva
     $sql = "INSERT INTO Reservas (id_cliente, id_habitacion, num_personas, dia_entrada, dia_salida, estado) VALUES ($id_usuario, $id_habitacion, $capacidad, '$fecha_entrada', '$fecha_salida', 'Pendiente')";
     if ($conn->query($sql) === TRUE) {
-        echo "Reserva creada correctamente";
+        //echo "Reserva creada correctamente";
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
@@ -28,18 +48,33 @@ function InsertarReserva($fecha_entrada, $fecha_salida, $capacidad , $id_usuario
 }
 
 function HTMLreservar() {
+
+    $errorDiv = '';
+    $boton = "Enviar datos";
+    $reservaCreada = '';
+
+    
     if (isset($_POST['enviar'])) {
         $fecha_entrada = $_POST['fecha_entrada'];
         $fecha_salida = $_POST['fecha_salida'];
         $capacidad = $_POST['n-personas'];
 
-        InsertarReserva($fecha_entrada, $fecha_salida, $capacidad, Session::get('user')['id_usuario']);
+        $validacion = ValidarReserva($fecha_entrada, $fecha_salida, $capacidad);
+        if($validacion === true){
+            InsertarReserva($fecha_entrada, $fecha_salida, $capacidad, Session::get('user')['id_usuario']);
+            $reservaCreada = '<div class="error">Reserva creada correctamente</div>';        }else{
+            $errorDiv = '<div class="error">' . nl2br($validacion) . '</div>';
+            $boton = "Reintenta enviar datos";
+        }
+
     }
 
     return <<<HTML
     <main class="main-content">
-        <form action="" method="POST" enctype="multipart/form-data">
+        <form action="" method="POST" enctype="multipart/form-data" novalidate>
             <input type="hidden" id="version_formulario" name="version_formulario" value="1.0">
+
+            $errorDiv
 
             <fieldset class="datos-personales">
                 <legend>Datos reserva</legend>
@@ -113,7 +148,8 @@ function HTMLreservar() {
                 </div>
             </fieldset>
             
-            <input type="submit" name="enviar" value="Enviar datos">
+            <input type="submit" name="enviar" value= "$boton">
+            $reservaCreada
         </form>
     </main>
 HTML;
