@@ -1,3 +1,7 @@
+.datos-reserva label[for="n-personas"] {
+    width: 120px;
+}
+
 .reservations {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
