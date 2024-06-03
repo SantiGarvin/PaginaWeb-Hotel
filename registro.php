@@ -100,6 +100,8 @@ function procesarRegistro(&$datos, &$errores, &$confirmacion)
 // Mostrar el formulario HTML
 function HTMLregistro($datos = [], $errores = [], $confirmacion = false)
 {
+
+    procesarRegistro($datos, $errores, $confirmacion);
     ob_start(); // Iniciar el output buffering
 ?>
     <main class="main-content">
@@ -265,13 +267,4 @@ function HTMLregistro($datos = [], $errores = [], $confirmacion = false)
 <?php
     return ob_get_clean(); // Obtener el contenido del buffer y limpiarlo
 }
-
-// Lógica principal para procesar el formulario y generar la página
-$datos = [];
-$errores = [];
-$confirmacion = false;
-
-procesarRegistro($datos, $errores, $confirmacion);
-// echo HTMLregistro($datos, $errores, $confirmacion);
-
 ?>
