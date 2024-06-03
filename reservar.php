@@ -48,15 +48,26 @@ function InsertarReserva($fecha_entrada, $fecha_salida, $capacidad ,$comentario 
 
 function HTMLreservar() {
     global $conn;
-    $error_div = '';
+
+    // Initialize variables
+    $fecha_entrada = '';
+    $fecha_salida = '';
+    $capacidad = '';
+    $comentarios = '';
+    $errorDiv = '';
     $boton = "Enviar datos";
     $reserva_creada = '';
     $modificar = false;
-    $id_modificacion = null;
+
+    if(isset($_POST['id'])){
+        $id_modificacion = $_POST['id'];
+        Session::set('id_modificacion', $id_modificacion);
+    }
+
+    $id_modificacion = Session::get('id_modificacion');
 
     if (isset($_POST['accion']) && $_POST['accion'] == 'modificar') {
         $modificar = true;
-        $id_modificacion = $_POST['id'];
         $boton = "Modificar datos";
 
         $sql = "SELECT * FROM Reservas WHERE id_reserva = $id_modificacion";
@@ -74,19 +85,22 @@ function HTMLreservar() {
     }
 
     if ($modificar) {
-        $readonly = 'readonly';
+        $accion = 'modificar';
+        $disabled = 'readonly';
     } else {
-        $readonly = '';
+        $accion = 'nuevo';
+        $disabled = '';
     }
 
-    $fecha_entrada = $_POST['fecha_entrada'];
-    $fecha_salida = $_POST['fecha_salida'];
-    $capacidad = $_POST['n-personas'];
-    $comentarios = $_POST['comentarios'];
+
     
     if (isset($_POST['enviar'])) {
+        $fecha_entrada = $_POST['fecha_entrada'];
+        $fecha_salida = $_POST['fecha_salida'];
+        $capacidad = $_POST['n-personas'];
+        $comentarios = $_POST['comentarios'];
         
-        if ($modificar) {
+        if ($_POST['accion'] == 'modificar') {
         
             $sql = "UPDATE Reservas SET  comentarios = '$comentarios' WHERE id_reserva = $id_modificacion";
             if ($conn->query($sql) === TRUE) {
@@ -110,8 +124,9 @@ function HTMLreservar() {
     <main class="main-content">
         <form action="" method="POST" enctype="multipart/form-data" novalidate>
             <input type="hidden" id="version_formulario" name="version_formulario" value="1.0">
-    
-            $error_div
+            <input type="hidden" id="accion" name="accion" value="$accion">
+            
+            $errorDiv
     
             <fieldset class="datos-reserva">
                 <legend>Datos reserva</legend>
