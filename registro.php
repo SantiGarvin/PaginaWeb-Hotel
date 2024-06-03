@@ -1,13 +1,15 @@
 <?php
 
-function validarDNI($dni) {
+function validarDNI($dni)
+{
     $numbers = substr($dni, 0, -1);
     $letter = substr($dni, -1);
     $validLetters = "TRWAGMYFPDXBNJZSQVHLCKE";
     return $validLetters[$numbers % 23] === $letter;
 }
 
-function validarTarjetaCredito($number) {
+function validarTarjetaCredito($number)
+{
     $number = str_replace(' ', '', $number);
     $sum = 0;
     for ($i = 0; $i < strlen($number); $i++) {
@@ -85,14 +87,33 @@ function procesarRegistro(&$datos, &$errores, &$confirmacion)
                 $confirmacion = true;
             }
         } else {
-            // Aquí puedes insertar los datos en la base de datos o realizar otras acciones necesarias
+            if (empty($errores)) {
+                // Crear una instancia de la clase Api
+                $api = new Api();
 
-            // Inicia sesión para el usuario y redirige a la página de inicio
-            session_start();
-            $_SESSION['usuario'] = $datos['correo'];
-            // Redirigir a la página de inicio
-            header("Location: index.php");
-            exit();
+                // Preparar los datos para la función createUser
+                $userData = [
+                    'name' => $datos['nombre'] . ' ' . $datos['apellidos'],
+                    'email' => $datos['correo'],
+                    'password' => $datos['password'],
+                    'role' => 'user' // Aquí puedes asignar el rol que necesites
+                ];
+
+                // Llamar a la función createUser
+                $userId = $api->createUser($userData);
+
+                if ($userId) {
+                    // Iniciar sesión para el usuario y redirigir a la página de inicio
+                    session_start();
+                    $_SESSION['usuario'] = $datos['correo'];
+                    // Redirigir a la página de inicio
+                    header("Location: index.php");
+                    // exit();
+                } else {
+                    // Manejar el error en caso de que la creación del usuario falle
+                    $errores['general'] = "Error al crear el usuario. Inténtelo de nuevo más tarde.";
+                }
+            }
         }
     }
 }

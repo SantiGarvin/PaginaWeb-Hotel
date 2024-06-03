@@ -8,34 +8,33 @@ require_once 'includes/autenticacion.php';
 function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $huespedesAlojados)
 {
   $error = '';
-  if(isset($_POST['username']) && isset($_POST['password'])){
-    if(autenticacion()){
+  if (isset($_POST['username']) && isset($_POST['password'])) {
+    if (autenticacion()) {
       $user =  Session::get('user');
-      header("Location: ".$_SERVER['PHP_SELF']);
-    }
-    else{
+      header("Location: " . $_SERVER['PHP_SELF']);
+    } else {
       $error = 'Usuario o contraseña incorrectos';
     }
   }
-  
-  if(!Session::isSessionOpen()){
+
+  if (!Session::isSessionOpen()) {
     Session::set('nombre', $username);
-  }else{
+  } else {
     $nombreUsuario = isset(Session::get('user')['nombre']) ? Session::get('user')['nombre'] : '';
   }
 
 
-  if(isset($_POST['logout'])){
+  if (isset($_POST['logout'])) {
     Session::destroy();
-    header("Location: ".$_SERVER['PHP_SELF']);
+    header("Location: " . $_SERVER['PHP_SELF']);
     exit();
   }
 
 
   //Html del aside
 
-  if(null !== Session::get('user') && Session::get('user')['rol'] != 'anonimo'){
-      $AUX = <<<HTML
+  if (null !== Session::get('user') && Session::get('user')['rol'] != 'anonimo') {
+    return <<<HTML
       <aside class="aside_login">
         <div class="login">
         <h2>Bienvenido, {$nombreUsuario}</h2>
@@ -52,38 +51,32 @@ function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $hu
         </div>
       </aside>
     HTML;
-    return $AUX;
-  }else{
-    $AUX = <<<HTML
+  } else {
+    ob_start(); // Iniciar el output buffering
+?>
     <aside class="aside_login">
-        <div class="login">
-          <h2>Iniciar sesión</h2>
-          <form action="" method="post" novalidate>
-            <input type="text" id="username" name="username" placeholder="Usuario" required><br>
-            <input type="password" id="password" name="password" placeholder="Contraseña" required><br>
-            <input type="submit" value="Login">
-          </form>
-        </div>
-    HTML;
-
-    if($error != ''){
-      $AUX .= <<<HTML
-        <div class="">
-          <p>{$error}</p>
-        </div>
-      HTML;
-    }
-
-    $AUX .= <<<HTML
-        <div class="info_hotel">
-          <h3>Información del Hotel</h3>
-          <p>Nº total de habitaciones: {$totalHabitaciones}</p>
-          <p>Nº de habitaciones libres: {$habitacionesLibres}</p>
-          <p>Capacidad total del hotel: {$capacidadTotal} huéspedes</p>
-          <p>Nº de huéspedes alojados: {$huespedesAlojados}</p>
-        </div>
+      <div class="login">
+        <h2>Iniciar sesión</h2>
+        <form action="" method="post" novalidate>
+          <input type="text" id="username" name="username" placeholder="Usuario" required><br>
+          <input type="password" id="password" name="password" placeholder="Contraseña" required><br>
+          <input type="submit" value="Login">
+          <?php if ($error != '') : ?>
+            <div class="">
+              <span class="error error-login"><?= htmlspecialchars($error) ?></span>
+            </div>
+          <?php endif; ?>
+        </form>
+      </div>
+      <div class="info_hotel">
+        <h3>Información del Hotel</h3>
+        <p>Nº total de habitaciones: <?= htmlspecialchars($totalHabitaciones) ?></p>
+        <p>Nº de habitaciones libres: <?= htmlspecialchars($habitacionesLibres) ?></p>
+        <p>Capacidad total del hotel: <?= htmlspecialchars($capacidadTotal) ?> huéspedes</p>
+        <p>Nº de huéspedes alojados: <?= htmlspecialchars($huespedesAlojados) ?></p>
+      </div>
     </aside>
-    HTML;
-    return $AUX;
+<?php
+    return ob_get_clean(); // Obtener el contenido del buffer y limpiarlo  }
   }
 }
