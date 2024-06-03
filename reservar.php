@@ -173,6 +173,7 @@ function HTMLreservar() {
     $reserva_en_proceso = [];
     $reserva_creada = '';
     $modificar = false;
+    $id_usuario_manual = null;
 
     if(isset($_POST['id'])){
         $id_modificacion = $_POST['id'];
@@ -230,9 +231,16 @@ function HTMLreservar() {
                 $reserva_en_proceso = BuscarHabitacion($capacidad, $fecha_entrada, $fecha_salida);
 
                 if (is_array($reserva_en_proceso)) {
-                    InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, Session::get('user')['id_usuario']);
+
+                    if($_POST['accion'] == 'add-reserva'){
+                        $id_usuario_manual = $_POST['id_usuario_manual'];
+                        InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, $id_usuario_manual );
+                    }else{
+                        InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, Session::get('user')['id_usuario']);
+                    } 
                     Session::set('id_reserva_reciente', $conn->insert_id); // Guardar el ID de la reserva recién insertada
-                    $reserva_creada = '<div class="error">Reserva creada correctamente</div>';        
+                    $reserva_creada = '<div class="error">Reserva creada correctamente</div>';  
+
                 } else {
                     // Store the error message
                     $errorDiv = $reserva_en_proceso;
@@ -281,8 +289,14 @@ function HTMLreservar() {
             <input type="hidden" id="version_formulario" name="version_formulario" value="1.0">
             <input type="hidden" id="accion" name="accion" value="$accion">
             
+    HTML;
+
+
+
+    $AUX .= <<<HTML
+
             $errorDiv
-    
+
             <fieldset class="datos-reserva">
                 <legend>Datos reserva</legend>
     
