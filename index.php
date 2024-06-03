@@ -72,7 +72,7 @@ $estilos = glob('css/*.css'); // Array con los estilos CSS
 $head = HTMLhead("Proyecto Final", $estilos);
 $header = HTMLheader();
 $menu = HTMLnavbar($menu, $opc, 'activo');
-$aside = HTMLaside(3, 2, 9, 5); //$totalHabitaciones, $habitacionesLibres, $capacidadTotal, $huespedesAlojados
+$aside = HTMLaside(); //$totalHabitaciones, $habitacionesLibres, $capacidadTotal, $huespedesAlojados
 $footer = HTMLfooter($autores, ".", "");
 
 $cuerpo = match ($opc) {

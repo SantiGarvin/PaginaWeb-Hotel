@@ -3,6 +3,63 @@
 require_once 'includes/db-connection.php';
 require_once 'includes/Session.php';
 
+function NHabitacionesLibres() {
+    global $conn;
+
+    $fecha_actual = date('Y-m-d');
+
+    $sql = "SELECT COUNT(*) AS total FROM Habitaciones 
+            WHERE estado = 'Operativa' 
+            AND id_habitacion NOT IN (
+                SELECT id_habitacion FROM Reservas 
+                WHERE '$fecha_actual' BETWEEN dia_entrada AND dia_salida
+                AND estado IN ('Pendiente', 'Confirmada')
+            )";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['total'];
+    } else {
+        return 0;
+    }
+}
+
+function NHabitaciones() {
+    global $conn;
+
+    $sql = "SELECT COUNT(*) AS total FROM Habitaciones";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['total'];
+    } else {
+        return 0;
+    }
+}
+
+function CapacidadTotal() {
+    global $conn;
+
+    $sql = "SELECT SUM(capacidad) AS total FROM Habitaciones";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['total'];
+    } else {
+        return 0;
+    }
+}
+
+function NHuespedesAlojados() {
+    global $conn;
+
+    $sql = "SELECT COUNT(*) AS total FROM Reservas WHERE estado = 'Confirmada'";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['total'];
+    } else {
+        return 0;
+    }
+}
+
+
 function ValidarReserva($fecha_entrada, $fecha_salida, $capacidad)
 {
     $errores = "";
@@ -22,7 +79,7 @@ function ValidarReserva($fecha_entrada, $fecha_salida, $capacidad)
     return $errores ? $errores : true;
 }
 
-function BuscarHabitacion($capacidad)
+function BuscarHabitacion($capacidad, $fecha_inicio, $fecha_fin)
 {
     global $conn;
 
@@ -31,7 +88,10 @@ function BuscarHabitacion($capacidad)
         AND estado = 'Operativa' 
         AND id_habitacion NOT IN (
             SELECT id_habitacion FROM Reservas 
-            WHERE estado IN ('Pendiente', 'Confirmada')
+            WHERE (estado IN ('Pendiente', 'Confirmada'))
+            AND (
+                (dia_entrada <= '$fecha_fin' AND dia_salida >= '$fecha_inicio')
+            )
         )
         ORDER BY capacidad ASC
         LIMIT 1";
@@ -44,7 +104,10 @@ function BuscarHabitacion($capacidad)
                 WHERE estado = 'Operativa' 
                 AND id_habitacion NOT IN (
                     SELECT id_habitacion FROM Reservas 
-                    WHERE estado IN ('Pendiente', 'Confirmada')
+                    WHERE (estado IN ('Pendiente', 'Confirmada'))
+                    AND (
+                        (dia_entrada <= '$fecha_fin' AND dia_salida >= '$fecha_inicio')
+                    )
                 )";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
@@ -164,7 +227,7 @@ function HTMLreservar() {
             $validacion = ValidarReserva($fecha_entrada, $fecha_salida, $capacidad);
             if($validacion === true){
 
-                $reserva_en_proceso = BuscarHabitacion($capacidad);
+                $reserva_en_proceso = BuscarHabitacion($capacidad, $fecha_entrada, $fecha_salida);
 
                 if (is_array($reserva_en_proceso)) {
                     InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, Session::get('user')['id_usuario']);
