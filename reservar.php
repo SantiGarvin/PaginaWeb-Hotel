@@ -26,21 +26,21 @@ function BuscarHabitacion($capacidad)
 {
     global $conn;
 
-    $sql = "SELECT id_habitacion, numero, precio_noche FROM Habitaciones 
-            WHERE capacidad >= $capacidad 
-            AND estado = 'Operativa' 
-            AND id_habitacion NOT IN (
-                SELECT id_habitacion FROM Reservas 
-                WHERE estado IN ('Pendiente', 'Confirmada')
-            )
-            ORDER BY capacidad ASC
-            LIMIT 1";
+    $sql = "SELECT id_habitacion, numero, precio_por_noche FROM Habitaciones 
+        WHERE capacidad >= $capacidad 
+        AND estado = 'Operativa' 
+        AND id_habitacion NOT IN (
+            SELECT id_habitacion FROM Reservas 
+            WHERE estado IN ('Pendiente', 'Confirmada')
+        )
+        ORDER BY capacidad ASC
+        LIMIT 1";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
         return $result->fetch_assoc();
     } else {
         // Ver si hay alguna habitacion disponible 
-        $sql = "SELECT id_habitacion, numero, precio_noche FROM Habitaciones 
+        $sql = "SELECT id_habitacion, numero, precio_por_noche FROM Habitaciones 
                 WHERE estado = 'Operativa' 
                 AND id_habitacion NOT IN (
                     SELECT id_habitacion FROM Reservas 
@@ -144,8 +144,6 @@ function HTMLreservar() {
         $accion = 'nuevo';
         $readonly = '';
     }
-
-
     
     if (isset($_POST['enviar'])) {
         $fecha_entrada = $_POST['fecha_entrada'];
@@ -168,14 +166,51 @@ function HTMLreservar() {
 
                 $reserva_en_proceso = BuscarHabitacion($capacidad);
 
-                InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, Session::get('user')['id_usuario']);
-                $reserva_creada = '<div class="error">Reserva creada correctamente</div>';        
+                if (is_array($reserva_en_proceso)) {
+                    InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, Session::get('user')['id_usuario']);
+                    Session::set('id_reserva_reciente', $conn->insert_id); // Guardar el ID de la reserva recién insertada
+                    $reserva_creada = '<div class="error">Reserva creada correctamente</div>';        
+                } else {
+                    // Store the error message
+                    $errorDiv = $reserva_en_proceso;
+                }
             }else{
                 $error_div = '<div class="error">' . nl2br($validacion) . '</div>';
                 $boton = "Reintenta enviar datos";
             }
         }
     }
+
+
+    if (isset($_POST['confirmar'])) {
+        // Actualizar el estado de la reserva a 'Confirmada'
+        $id_reserva_reciente = Session::get('id_reserva_reciente');
+
+        $sql = "UPDATE Reservas SET estado = 'Confirmada' WHERE id_reserva = $id_reserva_reciente";
+        if ($conn->query($sql) === TRUE) {
+            $reserva_creada = '<div class="error">Reserva confirmada correctamente</div>';
+            Session::set('id_reserva_reciente', null); // Limpiar la variable de sesión
+        } else {
+            $error_div = '<div class="error">Error al confirmar la reserva</div>';
+        }
+    }
+    
+    if (isset($_POST['cancelar'])) {
+        // Obtener el ID de la reserva reciente
+        $id_reserva_reciente = Session::get('id_reserva_reciente');
+    
+        // Eliminar la reserva
+        $sql = "DELETE FROM Reservas WHERE id_reserva = $id_reserva_reciente";
+        if ($conn->query($sql) === TRUE) {
+            $reserva_creada = '<div class="error">Reserva cancelada correctamente</div>';
+            Session::set('id_reserva_reciente', null); // Limpiar la variable de sesión
+        } else {
+            $error_div = '<div class="error">Error al cancelar la reserva</div>';
+        }
+    }
+    
+
+
 
     $AUX = <<<HTML
     <main class="main-content">
@@ -225,30 +260,37 @@ function HTMLreservar() {
             </fieldset>
     HTML;
 
-    if (isset($reserva_en_proceso['numero']) && isset($reserva_en_proceso['precio_noche'])) {
+    if (isset($reserva_en_proceso['numero']) && isset($reserva_en_proceso['precio_por_noche'])) {
+        $boton = "Confirmar reserva";
         $AUX .= <<<HTML
         <fieldset class="datos-habitacion">
             <legend>Datos de la habitación</legend>
-
+    
             <div class="fila">
                 <div class="columna">
-                    <label>
+                <label for="n-personas">
                         Número de habitación:
                         <input type="text" value="{$reserva_en_proceso['numero']}" readonly>
                     </label>
-
-                    <label>
+    
+                    <label for="n-personas">
                         Precio por noche:
-                        <input type="text" value="{$reserva_en_proceso['precio_noche']}" readonly>
+                        <input type="text" value="{$reserva_en_proceso['precio_por_noche']}" readonly>
                     </label>
                 </div>
             </div>
         </fieldset>
+        <input type="submit" name="confirmar" value="Confirmar reserva">
+        <input type="submit" name="cancelar" value="Cancelar reserva">
+        HTML;
+    }else{
+        $AUX .= <<<HTML
+        <input type="submit" name="enviar" value= "$boton">
         HTML;
     }
+    
 
     $AUX .= <<<HTML
-            <input type="submit" name="enviar" value= "$boton">
             $reserva_creada
         </form>
     </main>
