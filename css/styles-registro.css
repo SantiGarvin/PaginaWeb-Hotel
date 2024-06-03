@@ -102,7 +102,7 @@ label {
 
 .datos-personales label,
 .datos-acceso label {
-    text-align: right;
+    /* text-align: right; */
 }
 
 .datos-personales .columna-fotografia label {
