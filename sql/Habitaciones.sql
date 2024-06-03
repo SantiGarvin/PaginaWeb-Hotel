@@ -11,7 +11,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
+-- Change character set and collation to UTF8MB4
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -27,18 +27,23 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `Habitaciones`
 --
 
-DROP TABLE IF EXISTS `Habitaciones`;
-
 CREATE TABLE IF NOT EXISTS `Habitaciones` (
   `id_habitacion` int NOT NULL AUTO_INCREMENT,
-  `numero` varchar(20) COLLATE utf8mb3_spanish_ci NOT NULL,
+  `numero` varchar(20) COLLATE utf8mb4_spanish_ci NOT NULL,
   `capacidad` int NOT NULL,
   `precio_por_noche` decimal(10, 2) NOT NULL,
-  `descripcion` text COLLATE utf8mb3_spanish_ci NOT NULL,
+  `descripcion` text COLLATE utf8mb4_spanish_ci NOT NULL,
   `n-imagenes` int NOT NULL,
   PRIMARY KEY (`id_habitacion`),
   UNIQUE KEY `numero` (`numero`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_spanish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+ALTER TABLE `Habitaciones`
+  MODIFY `id_habitacion` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=303;
+COMMIT;
 
 --
 -- Volcado de datos para la tabla `Habitaciones`
@@ -58,20 +63,6 @@ INSERT INTO `Habitaciones` (`id_habitacion`, `numero`, `capacidad`, `precio_por_
 (302, '302', 4, 25.5, '', 0),
 (1, 'Suite presidencial', 4, 25.5, '', 0),
 (2, 'Suite nupcial', 2, 25.5, '', 0);
-
---
--- Índices para tablas volcadas
---
---
--- Indices de la tabla `Habitaciones`
---
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-ALTER TABLE `Habitaciones`
-  MODIFY `id_habitacion` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=303;
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -48,7 +48,7 @@ $menu = [
 
 $itemsAdicionalesMenu = match ($tipo_usuario) {
     'anonimo'           => [['Registro', 'index.php?p=3']],
-    'Cliente'        => [
+    'Cliente'           => [
         ['Reservar', 'index.php?p=5'],
         ['Mi cuenta', 'index.php?p=6']
     ],
