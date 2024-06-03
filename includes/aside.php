@@ -1,12 +1,22 @@
 <?php
 require_once 'includes/Session.php';
 require_once 'includes/autenticacion.php';
+include_once 'reservar.php';
+//include_once 'reservations.php';
 
 /**
  * Generar aside para login 
  */
-function HTMLaside($totalHabitaciones, $habitacionesLibres, $capacidadTotal, $huespedesAlojados)
+function HTMLaside()
 {
+
+  $totalHabitaciones = NHabitaciones(); 
+  $habitacionesLibres = NHabitacionesLibres();
+  $capacidadTotal = CapacidadTotal();
+  $huespedesAlojados = NHuespedesAlojados();
+
+
+
   $error = '';
   if (isset($_POST['username']) && isset($_POST['password'])) {
     if (autenticacion()) {

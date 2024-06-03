@@ -3,6 +3,63 @@
 require_once 'includes/db-connection.php';
 require_once 'includes/Session.php';
 
+function NHabitacionesLibres() {
+    global $conn;
+
+    $fecha_actual = date('Y-m-d');
+
+    $sql = "SELECT COUNT(*) AS total FROM Habitaciones 
+            WHERE estado = 'Operativa' 
+            AND id_habitacion NOT IN (
+                SELECT id_habitacion FROM Reservas 
+                WHERE '$fecha_actual' BETWEEN dia_entrada AND dia_salida
+                AND estado IN ('Pendiente', 'Confirmada')
+            )";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['total'];
+    } else {
+        return 0;
+    }
+}
+
+function NHabitaciones() {
+    global $conn;
+
+    $sql = "SELECT COUNT(*) AS total FROM Habitaciones";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['total'];
+    } else {
+        return 0;
+    }
+}
+
+function CapacidadTotal() {
+    global $conn;
+
+    $sql = "SELECT SUM(capacidad) AS total FROM Habitaciones";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['total'];
+    } else {
+        return 0;
+    }
+}
+
+function NHuespedesAlojados() {
+    global $conn;
+
+    $sql = "SELECT COUNT(*) AS total FROM Reservas WHERE estado = 'Confirmada'";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc()['total'];
+    } else {
+        return 0;
+    }
+}
+
+
 function ValidarReserva($fecha_entrada, $fecha_salida, $capacidad)
 {
     $errores = "";
@@ -22,7 +79,7 @@ function ValidarReserva($fecha_entrada, $fecha_salida, $capacidad)
     return $errores ? $errores : true;
 }
 
-function BuscarHabitacion($capacidad)
+function BuscarHabitacion($capacidad, $fecha_inicio, $fecha_fin)
 {
     global $conn;
 
@@ -31,7 +88,10 @@ function BuscarHabitacion($capacidad)
         AND estado = 'Operativa' 
         AND id_habitacion NOT IN (
             SELECT id_habitacion FROM Reservas 
-            WHERE estado IN ('Pendiente', 'Confirmada')
+            WHERE (estado IN ('Pendiente', 'Confirmada'))
+            AND (
+                (dia_entrada <= '$fecha_fin' AND dia_salida >= '$fecha_inicio')
+            )
         )
         ORDER BY capacidad ASC
         LIMIT 1";
@@ -44,7 +104,10 @@ function BuscarHabitacion($capacidad)
                 WHERE estado = 'Operativa' 
                 AND id_habitacion NOT IN (
                     SELECT id_habitacion FROM Reservas 
-                    WHERE estado IN ('Pendiente', 'Confirmada')
+                    WHERE (estado IN ('Pendiente', 'Confirmada'))
+                    AND (
+                        (dia_entrada <= '$fecha_fin' AND dia_salida >= '$fecha_inicio')
+                    )
                 )";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
@@ -54,6 +117,19 @@ function BuscarHabitacion($capacidad)
             // No hay habitaciones disponibles
             return 'no_disponible';
         }
+    }
+}
+
+function checkUserRole_Recepcionista($id_usuario) {
+    global $conn;
+
+    $sql = "SELECT COUNT(*) AS total FROM Usuarios WHERE id_usuario = $id_usuario AND rol = 'Recepcionista'";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['total'] > 0;
+    } else {
+        return false;
     }
 }
 
@@ -110,6 +186,8 @@ function HTMLreservar() {
     $reserva_en_proceso = [];
     $reserva_creada = '';
     $modificar = false;
+    $id_usuario_manual = null;
+    $id_recepcionista = false;
 
     if(isset($_POST['id'])){
         $id_modificacion = $_POST['id'];
@@ -164,12 +242,19 @@ function HTMLreservar() {
             $validacion = ValidarReserva($fecha_entrada, $fecha_salida, $capacidad);
             if($validacion === true){
 
-                $reserva_en_proceso = BuscarHabitacion($capacidad);
+                $reserva_en_proceso = BuscarHabitacion($capacidad, $fecha_entrada, $fecha_salida);
 
                 if (is_array($reserva_en_proceso)) {
-                    InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, Session::get('user')['id_usuario']);
+
+                    if($_POST['accion'] == 'add-reserva'){
+                        $id_usuario_manual = $_POST['id_usuario_manual'];
+                        InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, $id_usuario_manual );
+                    }else{
+                        InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, Session::get('user')['id_usuario']);
+                    } 
                     Session::set('id_reserva_reciente', $conn->insert_id); // Guardar el ID de la reserva recién insertada
-                    $reserva_creada = '<div class="error">Reserva creada correctamente</div>';        
+                    $reserva_creada = '<div class="error">Reserva creada correctamente</div>';  
+
                 } else {
                     // Store the error message
                     $errorDiv = $reserva_en_proceso;
@@ -218,8 +303,29 @@ function HTMLreservar() {
             <input type="hidden" id="version_formulario" name="version_formulario" value="1.0">
             <input type="hidden" id="accion" name="accion" value="$accion">
             
-            $errorDiv
+    HTML;
+
+    if (isset($_POST['accion']) && $_POST['accion'] == 'add-reserva' && checkUserRole_Recepcionista($_POST['id_rece']) {
+        $AUX .= <<<HTML
+            <fieldset class="datos-reserva">
+                <legend>Datos a meter unicamente por el recepcionista:</legend>    
+                <div class="fila">
+                    <div class="columna columna-nombre-apellidos">
+                        <label for="id_usuario_manual">
+                            ID Usuario:
+                            <input type="text" id="id_usuario_manual" name="id_usuario_manual" required value="$id_usuario_manual">
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        HTML;
+    }
     
+
+    $AUX .= <<<HTML
+
+            $errorDiv
+
             <fieldset class="datos-reserva">
                 <legend>Datos reserva</legend>
     
