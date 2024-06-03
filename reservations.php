@@ -52,10 +52,11 @@
 } -->
 
 <?php
-function HTMLreservations()
-{
+
+function HTMLreservations() {
     ob_start();
-?>
+    $id_rece = Session::get('user')['id_usuario'];
+    ?>
     <div class="main-content">
         <h1>Gestión de Reservas</h1>
         <ul>
@@ -64,11 +65,20 @@ function HTMLreservations()
             <li><a href="?p=4&action=view_rooms">Ver Habitaciones</a></li>
             <li><a href="?p=4&action=add_room">Añadir Habitación</a></li>
             <li><a href="?p=4&action=view_reservations">Ver Reservas</a></li>
-            <li><a href="?p=4&action=add_reservation">Añadir Reserva</a></li>
+            <li><a href="#" onclick="submitAddReservationForm(); return false;">Añadir Reserva</a></li>
         </ul>
+        <form id="addReservationForm" action="index.php?p=5" method="post" style="display:none;">
+            <input type="hidden" name="id_rece" value="<?= $id_rece ?>">
+            <input type="hidden" name="accion" value="add-reserva">
+        </form>
         <?= handleReceptionistActions(); ?>
     </div>
-<?php
+    <script>
+        function submitAddReservationForm() {
+            document.getElementById('addReservationForm').submit();
+        }
+    </script>
+    <?php
     return ob_get_clean();
 }
 
@@ -313,13 +323,27 @@ function deleteRoom($id)
 
 function addReservationForm()
 {
-    return <<<HTML
-        <input type='hidden' name='id_rece' value='{$row['id_reserva']}'>
+    $id_rece = Session::get('user')['id_usuario'];
 
+    return <<<HTML
         <h2>Añadir Reserva</h2>
-        <form action="index.php?p=4&action=index.php?p=5" method="post">
-            
-        </form>';
+        <form id="addReservationForm" action="index.php?p=4&action=save_reservation" method="post">
+            <input type='hidden' name='id_rece' value='{$id_rece}'>
+            <label for="id_cliente">ID Cliente:</label>
+            <input type="number" id="id_cliente" name="id_cliente" required>
+            <label for="id_habitacion">ID Habitación:</label>
+            <input type="number" id="id_habitacion" name="id_habitacion" required>
+            <label for="num_personas">Número de Personas:</label>
+            <input type="number" id="num_personas" name="num_personas" required>
+            <label for="comentarios">Comentarios:</label>
+            <textarea id="comentarios" name="comentarios"></textarea>
+            <label for="dia_entrada">Día de Entrada:</label>
+            <input type="date" id="dia_entrada" name="dia_entrada" required>
+            <label for="dia_salida">Día de Salida:</label>
+            <input type="date" id="dia_salida" name="dia_salida" required>
+            <button type="submit">Guardar</button>
+        </form>
+        <a href="#" onclick="document.getElementById('addReservationForm').submit(); return false;">Enviar</a>
     HTML;
 }
 
