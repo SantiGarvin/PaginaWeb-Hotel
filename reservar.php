@@ -48,9 +48,9 @@ function InsertarReserva($fecha_entrada, $fecha_salida, $capacidad ,$comentario 
 
 function HTMLreservar() {
     global $conn;
-    $errorDiv = '';
+    $error_div = '';
     $boton = "Enviar datos";
-    $reservaCreada = '';
+    $reserva_creada = '';
     $modificar = false;
     $id_modificacion = null;
 
@@ -68,40 +68,39 @@ function HTMLreservar() {
             $capacidad = $row['num_personas'];
             $comentarios = $row['comentarios'];
         } else {
-            $errorDiv = '<div class="error">No se encontró la reserva a modificar</div>';
+            $error_div = '<div class="error">No se encontró la reserva a modificar</div>';
             return;
         }
     }
 
     if ($modificar) {
-        $disabled = 'readonly';
+        $readonly = 'readonly';
     } else {
-        $disabled = '';
+        $readonly = '';
     }
 
-
+    $fecha_entrada = $_POST['fecha_entrada'];
+    $fecha_salida = $_POST['fecha_salida'];
+    $capacidad = $_POST['n-personas'];
+    $comentarios = $_POST['comentarios'];
     
     if (isset($_POST['enviar'])) {
-        $fecha_entrada = $_POST['fecha_entrada'];
-        $fecha_salida = $_POST['fecha_salida'];
-        $capacidad = $_POST['n-personas'];
-        $comentarios = $_POST['comentarios'];
         
         if ($modificar) {
         
             $sql = "UPDATE Reservas SET  comentarios = '$comentarios' WHERE id_reserva = $id_modificacion";
             if ($conn->query($sql) === TRUE) {
-                $reservaCreada = '<div class="error">Reserva modificada correctamente</div>';
+                $reserva_creada = '<div class="error">Reserva modificada correctamente</div>';
             } else {
-                $errorDiv = '<div class="error">Error al modificar la reserva</div>';
+                $error_div = '<div class="error">Error al modificar la reserva</div>';
             }
 
         }else{
             $validacion = ValidarReserva($fecha_entrada, $fecha_salida, $capacidad);
             if($validacion === true){
                 InsertarReserva($fecha_entrada, $fecha_salida, $capacidad, $comentarios, Session::get('user')['id_usuario']);
-                $reservaCreada = '<div class="error">Reserva creada correctamente</div>';        }else{
-                $errorDiv = '<div class="error">' . nl2br($validacion) . '</div>';
+                $reserva_creada = '<div class="error">Reserva creada correctamente</div>';        }else{
+                $error_div = '<div class="error">' . nl2br($validacion) . '</div>';
                 $boton = "Reintenta enviar datos";
             }
         }
@@ -112,29 +111,29 @@ function HTMLreservar() {
         <form action="" method="POST" enctype="multipart/form-data" novalidate>
             <input type="hidden" id="version_formulario" name="version_formulario" value="1.0">
     
-            $errorDiv
+            $error_div
     
-            <fieldset class="datos-personales">
+            <fieldset class="datos-reserva">
                 <legend>Datos reserva</legend>
     
                 <div class="fila">
                     <div class="columna columna-nombre-apellidos">
-                    <label for="fecha-nacimiento">
+                        <label for="fecha-nacimiento">
                             F. entrada:
-                            <input type="date" id="fecha-nacimiento" name="fecha_entrada" required $disabled value="$fecha_entrada">
+                            <input type="date" id="fecha-nacimiento" name="fecha_entrada" required $readonly value="$fecha_entrada">
                         </label>
-    
+
                         <label for="fecha-nacimiento">
                             F. salida:
-                            <input type="date" id="fecha-nacimiento" name="fecha_salida" required $disabled value="$fecha_salida">
+                            <input type="date" id="fecha-nacimiento" name="fecha_salida" required $readonly value="$fecha_salida">
                         </label>
                     </div>
                 </div>
                 <div class="fila">
                     <div class="columna">
-                        <label for="dni">
+                        <label for="n-personas">
                             Cantidad de personas:
-                            <input type="text" id="dni" name="n-personas" placeholder="Nº de camas necesarias" required $disabled value="$capacidad">
+                            <input type="text" id="n-personas" name="n-personas" placeholder="Nº de camas necesarias" required $readonly value="$capacidad">
                         </label>
                     </div>
                 </div>
@@ -152,7 +151,7 @@ function HTMLreservar() {
                     </label>
             
             <input type="submit" name="enviar" value= "$boton">
-            $reservaCreada
+            $reserva_creada
         </form>
     </main>
     HTML;
