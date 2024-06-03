@@ -1,3 +1,25 @@
+ul {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+}
+
+ul li {
+    display: block;
+    margin: 0 10px;
+}
+
+ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+ul li a:hover {
+    color: #007BFF;
+}
+
+/* Estilo del formulario */
 form {
     display: flex;
     flex-direction: column;
@@ -5,8 +27,13 @@ form {
     margin: 0 auto;
 }
 
+.form-group {
+    margin-bottom: 15px;
+}
+
 label {
-    margin: 10px 0 5px;
+    display: block;
+    margin-bottom: 5px;
     font-weight: bold;
     color: #555;
 }
@@ -17,14 +44,13 @@ input[type="password"],
 input[type="number"], 
 input[type="date"],
 textarea {
-    padding: 10px;
-    margin-bottom: 10px;
+    /* padding: 10px; */
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
-    width: 100%;
+    /* width: 100%; */
     box-sizing: border-box;
-    display: block; /* Asegura que cada input ocupe una línea completa */
+    position: static;
 }
 
 textarea {
