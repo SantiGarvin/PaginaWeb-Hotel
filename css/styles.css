@@ -61,6 +61,21 @@ h3 {
     color: var(--terciary-color);
 }
 
+.error {
+    color: red;
+    font-size: 0.8em;
+    margin-top: 4px;
+    margin-left: 107px;
+    display: block;
+    font-weight: bold;
+}
+
+.error-login {
+    margin-top: 35px;
+    width: 100%;
+    margin-left: 0;
+}
+
 img {
     border-radius: 5px;
 }
@@ -233,7 +248,7 @@ footer a:hover {
 
 .aside_login .info_hotel {
     position: sticky;
-    top: 500px;
+    top: 550px;
     /* margin: auto; */
 }
 
