@@ -194,10 +194,8 @@ function HTMLreservar() {
 
                     if(Session::get('id_recepcionista')){
                         InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, $id_usuario_manual );
-                        echo "Reserva creada correctamente DESDE RECEPCIONISTA";
                     }else{
                         InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, Session::get('user')['id_usuario']);
-                        echo "Reserva creada correctamente DESDE NORMAL";
                     } 
                     Session::set('id_reserva_reciente', $conn->insert_id); // Guardar el ID de la reserva recién insertada
                     $reserva_creada = '<div class="error">Reserva creada correctamente</div>';  
