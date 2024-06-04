@@ -86,7 +86,18 @@ function updateUser($id)
         return "<p>Error al actualizar cliente: " . $conn->error . "</p>";
     }
 }
+function deleteUser($id)
+{
+    global $conn;
 
+    $sql = "DELETE FROM Usuarios WHERE id_usuario=$id";
+
+    if ($conn->query($sql) === TRUE) {
+        return "<p>Cliente eliminado correctamente.</p>";
+    } else {
+        return "<p>Error al eliminar cliente: " . $conn->error . "</p>";
+    }
+}
 
 function HTMLthabitaciones() {
     global $conn;
@@ -222,6 +233,8 @@ function HTMLadmin(){
             $usuarios_edit = editUserForm($_POST['id']);
         } elseif (isset($_POST['edicion']) && $_POST['edicion'] === 'edicion') {
             $usuarios_edit = updateUser($_POST['id']);
+        }elseif (isset($_POST['accion']) && $_POST['accion'] === 'eliminar' && isset($_POST['id'])) {
+            $usuarios_edit = deleteUser($_POST['id']);
         }
     }
 
