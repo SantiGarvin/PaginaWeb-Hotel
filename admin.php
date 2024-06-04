@@ -1,46 +1,103 @@
 <?php 
 
 require_once 'includes/db-connection.php';
+require_once 'includes/cifrar_claves.php';
 
 function HTMLtusuarios(){
     global $conn;
-
-    // Consulta para obtener todos los usuarios
-    $query = "SELECT * FROM Usuarios";
-    $result = $conn->query($query);
-
-    // Crear la tabla HTML
-    $table = "<table>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Apellidos</th>
-                    <th>DNI</th>
-                    <th>Email</th>
-                    <th>Clave</th>
-                    <th>Número de tarjeta de crédito</th>
-                    <th>Rol</th>
-                </tr>";
-
-    // Rellenar la tabla con los datos de los usuarios
+    $sql = "SELECT id_usuario, nombre, apellidos, dni, email, rol, clave FROM Usuarios";
+    $result = $conn->query($sql);
+    $output = "<table><tr><th>ID</th><th>Nombre</th><th>Apellidos</th><th>DNI</th><th>Email</th><th>Rol</th><th>Acciones</th></tr>";
     while ($row = $result->fetch_assoc()) {
-        $table .= "<tr>
-                    <td>{$row['id_usuario']}</td>
-                    <td>{$row['nombre']}</td>
-                    <td>{$row['apellidos']}</td>
-                    <td>{$row['dni']}</td>
-                    <td>{$row['email']}</td>
-                    <td>{$row['clave']}</td>
-                    <td>{$row['num_tarjeta_credito']}</td>
-                    <td>{$row['rol']}</td>
-                </tr>";
+        $output .= "<tr><td>{$row['id_usuario']}</td><td>{$row['nombre']}</td><td>{$row['apellidos']}</td><td>{$row['dni']}</td><td>{$row['email']}</td><td>{$row['rol']}</td>";
+        $output .= "<td>
+                        <form method='post' action=''>
+                            <input type='hidden' name='id' value='{$row['id_usuario']}'>
+                            <button type='submit' name='accion' value='eliminar'>Eliminar</button>
+                        </form>
+                        <form method='post' action=''>
+                            <input type='hidden' name='id' value='{$row['id_usuario']}'>
+                            <button type='submit' name='accion' value='editar'>Editar</button>
+                        </form>
+                    </td></tr>";
+    }
+    $output .= "</table>";
+    return $output;
+}
+function editUserForm($id)
+{
+    global $conn;
+    $sql = "SELECT nombre, apellidos, dni, email, num_tarjeta_credito, rol, clave FROM Usuarios WHERE id_usuario=$id";
+    $result = $conn->query($sql);
+    if ($row = $result->fetch_assoc()) {
+        return '
+        <h2>Editar Usuario</h2>
+        <form action="" method="post" novalidate>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" value="' . $row['nombre'] . '" required>
+            <label for="apellidos">Apellidos:</label>
+            <input type="text" id="apellidos" name="apellidos" value="' . $row['apellidos'] . '" required>
+            <label for="dni">DNI:</label>
+            <input type="text" id="dni" name="dni" value="' . $row['dni'] . '" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="' . $row['email'] . '" required>
+            <label for="num_tarjeta_credito">Número de Tarjeta de Crédito:</label>
+            <input type="text" id="num_tarjeta_credito" name="num_tarjeta_credito" value="' . $row['num_tarjeta_credito'] . '" required>
+            <label for="rol">Rol:</label>
+            <select id="rol" name="rol">
+                <option value="Cliente" ' . ($row['rol'] === 'Cliente' ? 'selected' : '') . '>Cliente</option>
+                <option value="Administrador" ' . ($row['rol'] === 'Administrador' ? 'selected' : '') . '>Administrador</option>
+                <option value="Recepcionista" ' . ($row['rol'] === 'Recepcionista' ? 'selected' : '') . '>Recepcionista</option>
+            </select>
+            
+            <label for="clave">Clave:</label>
+            <input type="password" id="clave" name="clave" required>
+            <input type="hidden" name="edicion" value="edicion">
+            <input type="hidden" name="id" value="' . $id . '">
+
+            <button type="submit">Guardar</button>
+        </form>';
+    } else {
+        return "<p>Usuario no encontrado.</p>";
+    }
     }
 
-    $table .= "</table>";
+function updateUser($id)
+{
+    global $conn;
+    $nombre = $_POST['nombre'];
+    $apellidos = $_POST['apellidos'];
+    $dni = $_POST['dni'];
+    $email = $_POST['email'];
+    $num_tarjeta_credito = $_POST['num_tarjeta_credito'];
+    $rol = $_POST['rol'];
+    $clave = $_POST['clave'];
 
-    return $table;
+    if (empty($clave)) {
+        $sql = "UPDATE Usuarios SET nombre='$nombre', apellidos='$apellidos', dni='$dni', email='$email', num_tarjeta_credito='$num_tarjeta_credito', rol='$rol' WHERE id_usuario=$id AND rol='Cliente'";
+    } else {
+        $hashed_password = password_hash($clave, PASSWORD_BCRYPT);
+        $sql = "UPDATE Usuarios SET nombre='$nombre', apellidos='$apellidos', dni='$dni', email='$email', num_tarjeta_credito='$num_tarjeta_credito', rol='$rol', clave='$hashed_password' WHERE id_usuario=$id AND rol='Cliente'";
+    }
+
+    if ($conn->query($sql) === TRUE) {
+        return "<p>Cliente actualizado correctamente.</p>";
+    } else {
+        return "<p>Error al actualizar cliente: " . $conn->error . "</p>";
+    }
 }
+function deleteUser($id)
+{
+    global $conn;
 
+    $sql = "DELETE FROM Usuarios WHERE id_usuario=$id";
+
+    if ($conn->query($sql) === TRUE) {
+        return "<p>Cliente eliminado correctamente.</p>";
+    } else {
+        return "<p>Error al eliminar cliente: " . $conn->error . "</p>";
+    }
+}
 
 function HTMLthabitaciones() {
     global $conn;
@@ -170,14 +227,26 @@ function HTMLadmin(){
     $fotografias = HTMLtfotografias();
     $reservas = HTMLtreservas();
     $logs = HTMLtlogs();
+    $usuarios_edit = '';
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['accion']) && $_POST['accion'] === 'editar' && isset($_POST['id'])) {
+            $usuarios_edit = editUserForm($_POST['id']);
+        } elseif (isset($_POST['edicion']) && $_POST['edicion'] === 'edicion') {
+            $usuarios_edit = updateUser($_POST['id']);
+        }elseif (isset($_POST['accion']) && $_POST['accion'] === 'eliminar' && isset($_POST['id'])) {
+            $usuarios_edit = deleteUser($_POST['id']);
+        }
+    }
 
-    return <<<HTML
+    $AUX =  <<<HTML
     <main class="main-content">
         <section class="seccion-datos">
             <h2>Administración de la base de datos</h2>
             <p>En esta sección puede gestionar los datos de la base de datos.</p>
             <h3>Usuarios</h3>
             $usuarios
+            <a href="index.php?p=3">Añadir usuario</a>
+            $usuarios_edit
             <h3>Habitaciones</h3>
             $habitaciones
             <h3>Fotografías</h3>
@@ -189,6 +258,8 @@ function HTMLadmin(){
         </section>
     </main>
 HTML;
+
+    return $AUX;
 }
 
 ?>
