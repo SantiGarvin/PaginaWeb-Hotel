@@ -1,12 +1,21 @@
 <?php
 // Incluir el archivo de conexión a la base de datos
-include 'conexion.php'; // Asegúrate de que este archivo contiene la conexión global $conn
+include 'db-connection.php'; // Asegúrate de que este archivo contiene la conexión global $conn
+include 'create-tables_y_cifrar_claves.php';
 
 global $conn;
 
 if (isset($_GET['restore'])) {
+
+    // Drop all tables
+    $tables = $conn->query("SHOW TABLES");
+    while ($row = $tables->fetch_assoc()) {
+        $tableName = $row['Tables_in_database_name'];
+        $conn->query("DROP TABLE IF EXISTS $tableName");
+    }
+
     // Ruta al archivo SQL
-    $filePath = 'sql/backup.sql';
+    $filePath = '../sql/backup.sql';
 
     // Verificar si el archivo existe
     if (!file_exists($filePath)) {
@@ -47,5 +56,7 @@ if (isset($_GET['restore'])) {
         // Restaurar autocommit
         $conn->autocommit(TRUE);
     }
+
+    cifrarClaves();
 }
 ?>
