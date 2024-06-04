@@ -81,10 +81,10 @@ function HTMLaside()
       </div>
       <div class="info_hotel">
         <h3>Información del Hotel</h3>
-        <p>Nº total de habitaciones: <?= htmlspecialchars($totalHabitaciones) ?></p>
-        <p>Nº de habitaciones libres: <?= htmlspecialchars($habitacionesLibres) ?></p>
-        <p>Capacidad total del hotel: <?= htmlspecialchars($capacidadTotal) ?> huéspedes</p>
-        <p>Nº de huéspedes alojados: <?= htmlspecialchars($huespedesAlojados) ?></p>
+        <p>Nº total de habitaciones: <?= htmlspecialchars($totalHabitaciones ?? '') ?></p>
+        <p>Nº de habitaciones libres: <?= htmlspecialchars($habitacionesLibres ?? '') ?></p>
+        <p>Capacidad total del hotel: <?= htmlspecialchars($capacidadTotal ?? '') ?> huéspedes</p>
+        <p>Nº de huéspedes alojados: <?= htmlspecialchars($huespedesAlojados ?? '0') ?></p>
       </div>
     </aside>
 <?php
