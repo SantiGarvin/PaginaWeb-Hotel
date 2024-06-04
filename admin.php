@@ -1,14 +1,15 @@
 <?php 
 
 require_once 'includes/db-connection.php';
+require_once 'includes/cifrar_claves.php';
 
 function HTMLtusuarios(){
     global $conn;
-    $sql = "SELECT id_usuario, nombre, apellidos, dni, email FROM Usuarios";
+    $sql = "SELECT id_usuario, nombre, apellidos, dni, email, rol, clave FROM Usuarios";
     $result = $conn->query($sql);
-    $output = "<table><tr><th>ID</th><th>Nombre</th><th>Apellidos</th><th>DNI</th><th>Email</th><th>Acciones</th></tr>";
+    $output = "<table><tr><th>ID</th><th>Nombre</th><th>Apellidos</th><th>DNI</th><th>Email</th><th>Rol</th><th>Acciones</th></tr>";
     while ($row = $result->fetch_assoc()) {
-        $output .= "<tr><td>{$row['id_usuario']}</td><td>{$row['nombre']}</td><td>{$row['apellidos']}</td><td>{$row['dni']}</td><td>{$row['email']}</td>";
+        $output .= "<tr><td>{$row['id_usuario']}</td><td>{$row['nombre']}</td><td>{$row['apellidos']}</td><td>{$row['dni']}</td><td>{$row['email']}</td><td>{$row['rol']}</td>";
         $output .= "<td>
                         <form method='post' action=''>
                             <input type='hidden' name='id' value='{$row['id_usuario']}'>
@@ -23,7 +24,6 @@ function HTMLtusuarios(){
     $output .= "</table>";
     return $output;
 }
-
 function editUserForm($id)
 {
     global $conn;
@@ -32,7 +32,7 @@ function editUserForm($id)
     if ($row = $result->fetch_assoc()) {
         return '
         <h2>Editar Usuario</h2>
-        <form action="index.php?p=4&action=update_user&id=' . $id . '" method="post">
+        <form action="" method="post" novalidate>
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" name="nombre" value="' . $row['nombre'] . '" required>
             <label for="apellidos">Apellidos:</label>
@@ -52,6 +52,9 @@ function editUserForm($id)
             
             <label for="clave">Clave:</label>
             <input type="password" id="clave" name="clave" required>
+            <input type="hidden" name="edicion" value="edicion">
+            <input type="hidden" name="id" value="' . $id . '">
+
             <button type="submit">Guardar</button>
         </form>';
     } else {
@@ -67,7 +70,16 @@ function updateUser($id)
     $dni = $_POST['dni'];
     $email = $_POST['email'];
     $num_tarjeta_credito = $_POST['num_tarjeta_credito'];
-    $sql = "UPDATE Usuarios SET nombre='$nombre', apellidos='$apellidos', dni='$dni', email='$email', num_tarjeta_credito='$num_tarjeta_credito' WHERE id_usuario=$id AND rol='Cliente'";
+    $rol = $_POST['rol'];
+    $clave = $_POST['clave'];
+
+    if (empty($clave)) {
+        $sql = "UPDATE Usuarios SET nombre='$nombre', apellidos='$apellidos', dni='$dni', email='$email', num_tarjeta_credito='$num_tarjeta_credito', rol='$rol' WHERE id_usuario=$id AND rol='Cliente'";
+    } else {
+        $hashed_password = password_hash($clave, PASSWORD_BCRYPT);
+        $sql = "UPDATE Usuarios SET nombre='$nombre', apellidos='$apellidos', dni='$dni', email='$email', num_tarjeta_credito='$num_tarjeta_credito', rol='$rol', clave='$hashed_password' WHERE id_usuario=$id AND rol='Cliente'";
+    }
+
     if ($conn->query($sql) === TRUE) {
         return "<p>Cliente actualizado correctamente.</p>";
     } else {
@@ -200,24 +212,28 @@ function HTMLtlogs() {
 
 function HTMLadmin(){
     $usuarios = HTMLtusuarios();
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (isset($_POST['accion']) && $_POST['accion'] === 'editar' && isset($_POST['id'])) {
-            echo editUserForm($_POST['id']);
-        }
-    }
-
     $habitaciones = HTMLthabitaciones();
     $fotografias = HTMLtfotografias();
     $reservas = HTMLtreservas();
     $logs = HTMLtlogs();
+    $usuarios_edit = '';
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['accion']) && $_POST['accion'] === 'editar' && isset($_POST['id'])) {
+            $usuarios_edit = editUserForm($_POST['id']);
+        } elseif (isset($_POST['edicion']) && $_POST['edicion'] === 'edicion') {
+            $usuarios_edit = updateUser($_POST['id']);
+        }
+    }
 
-    return <<<HTML
+    $AUX =  <<<HTML
     <main class="main-content">
         <section class="seccion-datos">
             <h2>Administración de la base de datos</h2>
             <p>En esta sección puede gestionar los datos de la base de datos.</p>
             <h3>Usuarios</h3>
             $usuarios
+            <a href="index.php?p=3">Añadir usuario</a>
+            $usuarios_edit
             <h3>Habitaciones</h3>
             $habitaciones
             <h3>Fotografías</h3>
@@ -229,7 +245,8 @@ function HTMLadmin(){
         </section>
     </main>
 HTML;
-}
 
+    return $AUX;
+}
 
 ?>

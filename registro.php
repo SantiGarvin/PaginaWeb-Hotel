@@ -347,7 +347,6 @@ function HTMLregistro($datos = [], $errores = [], $confirmacion = false)
                         </div>
                     </div>
                 </fieldset>
-                <input type='hidden' name='id' value=<?= $datos['id']?>>
                 <input type="submit" name="enviar" value="Enviar datos">
             <?php endif; ?>
         </form>
