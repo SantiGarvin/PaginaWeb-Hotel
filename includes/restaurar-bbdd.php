@@ -1,7 +1,7 @@
 <?php
 // Incluir el archivo de conexión a la base de datos
 include 'db-connection.php'; // Asegúrate de que este archivo contiene la conexión global $conn
-include 'create-tables_y_cifrar_claves.php';
+include 'cifrar_claves.php';
 
 global $conn;
 
