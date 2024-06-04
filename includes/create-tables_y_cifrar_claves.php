@@ -3,7 +3,8 @@
 require_once 'db-connection.php';
 
 
-function cifrarClave() {
+function cifrarClaves() {
+    global $conn;
     // Solo ejecuta esto una vez para encriptar las contraseñas existentes
     $result = $conn->query('SELECT id_usuario, clave FROM Usuarios');
     while ($row = $result->fetch_assoc()) {
@@ -47,7 +48,6 @@ foreach ($sqlFiles as $file) {
 
 echo "Tablas creadas exitosamente.";
 
-cifrarClave();
+cifrarClaves();
 
-$conn->close();
 ?>
