@@ -60,7 +60,7 @@ function editUserForm($id)
     } else {
         return "<p>Usuario no encontrado.</p>";
     }
-    }
+}
 
 function updateUser($id)
 {

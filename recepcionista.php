@@ -169,6 +169,7 @@ function deletePhoto()
     echo json_encode($response);
 }
 
+
 function viewClients()
 {
     global $conn;
@@ -181,27 +182,6 @@ function viewClients()
     }
     $output .= "</table>";
     return $output;
-}
-
-function addClientForm()
-{
-    return '
-    <h2>Añadir Cliente</h2>
-    <form action="index.php?p=4&action=save_client" method="post">
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required>
-        <label for="apellidos">Apellidos:</label>
-        <input type="text" id="apellidos" name="apellidos" required>
-        <label for="dni">DNI:</label>
-        <input type="text" id="dni" name="dni" required>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <label for="clave">Clave:</label>
-        <input type="password" id="clave" name="clave" required>
-        <label for="num_tarjeta_credito">Número de Tarjeta de Crédito:</label>
-        <input type="text" id="num_tarjeta_credito" name="num_tarjeta_credito" required>
-        <button type="submit">Guardar</button>
-    </form>';
 }
 
 function saveClient()
@@ -224,12 +204,12 @@ function saveClient()
 function editClientForm($id)
 {
     global $conn;
-    $sql = "SELECT nombre, apellidos, dni, email, num_tarjeta_credito FROM Usuarios WHERE id_usuario=$id AND rol='Cliente'";
+    $sql = "SELECT nombre, apellidos, dni, email, num_tarjeta_credito, clave FROM Usuarios WHERE id_usuario=$id";
     $result = $conn->query($sql);
     if ($row = $result->fetch_assoc()) {
         return '
-        <h2>Editar Cliente</h2>
-        <form action="index.php?p=4&action=update_client&id=' . $id . '" method="post">
+        <h2>Editar Usuario</h2>
+        <form action="" method="post" novalidate>
             <label for="nombre">Nombre:</label>
             <input type="text" id="nombre" name="nombre" value="' . $row['nombre'] . '" required>
             <label for="apellidos">Apellidos:</label>
@@ -240,10 +220,17 @@ function editClientForm($id)
             <input type="email" id="email" name="email" value="' . $row['email'] . '" required>
             <label for="num_tarjeta_credito">Número de Tarjeta de Crédito:</label>
             <input type="text" id="num_tarjeta_credito" name="num_tarjeta_credito" value="' . $row['num_tarjeta_credito'] . '" required>
+
+            
+            <label for="clave">Clave:</label>
+            <input type="password" id="clave" name="clave" required>
+            <input type="hidden" name="edicion" value="edicion">
+            <input type="hidden" name="id" value="' . $id . '">
+
             <button type="submit">Guardar</button>
         </form>';
     } else {
-        return "<p>Cliente no encontrado.</p>";
+        return "<p>Usuario no encontrado.</p>";
     }
 }
 
@@ -255,7 +242,15 @@ function updateClient($id)
     $dni = $_POST['dni'];
     $email = $_POST['email'];
     $num_tarjeta_credito = $_POST['num_tarjeta_credito'];
-    $sql = "UPDATE Usuarios SET nombre='$nombre', apellidos='$apellidos', dni='$dni', email='$email', num_tarjeta_credito='$num_tarjeta_credito' WHERE id_usuario=$id AND rol='Cliente'";
+    $clave = $_POST['clave'];
+
+    if (empty($clave)) {
+        $sql = "UPDATE Usuarios SET nombre='$nombre', apellidos='$apellidos', dni='$dni', email='$email', num_tarjeta_credito='$num_tarjeta_credito', WHERE id_usuario=$id AND rol='Cliente'";
+    } else {
+        $hashed_password = password_hash($clave, PASSWORD_BCRYPT);
+        $sql = "UPDATE Usuarios SET nombre='$nombre', apellidos='$apellidos', dni='$dni', email='$email', num_tarjeta_credito='$num_tarjeta_credito', clave='$hashed_password' WHERE id_usuario=$id AND rol='Cliente'";
+    }
+
     if ($conn->query($sql) === TRUE) {
         return "<p>Cliente actualizado correctamente.</p>";
     } else {

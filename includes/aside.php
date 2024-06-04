@@ -1,7 +1,7 @@
 <?php
 require_once 'includes/Session.php';
 require_once 'includes/autenticacion.php';
-include_once 'reservations.php';
+include_once 'recepcionista.php';
 
 /**
  * Generar aside para login 
