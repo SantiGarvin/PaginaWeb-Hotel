@@ -3,11 +3,8 @@
 include 'db-connection.php'; // Asegúrate de que este archivo contiene la conexión global $conn
 include 'cifrar_claves.php';
 
-global $conn;
-
-if (isset($_GET['restore'])) {
-
-
+    global $conn;
+    
     // Drop all tables from the database
     $conn->query("DROP TABLE IF EXISTS Reservas");
     $conn->query("DROP TABLE IF EXISTS Fotografias");
@@ -63,5 +60,5 @@ if (isset($_GET['restore'])) {
     cifrarClaves();
 
     header('Location: ../index.php');
-}
+
 ?>
