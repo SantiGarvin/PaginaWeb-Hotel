@@ -70,11 +70,16 @@ function createUser($data)
 {
     global $conn;
 
-    $query = "INSERT INTO Usuarios (nombre, apellidos, dni, email, clave, num_tarjeta_credito, rol) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($query);
-
-    $hashed_password = password_hash($data['password'], PASSWORD_BCRYPT);
-    $stmt->bind_param('sssssss', $data['nombre'], $data['apellidos'], $data['dni'], $data['email'], $hashed_password, $data['tarjetaC'], $data['role']);
+    if ($data['id']) {
+        $query = "UPDATE Usuarios SET nombre = ?, apellidos = ?, dni = ?, email = ?, clave = ?, num_tarjeta_credito = ?, rol = ? WHERE id_usuario = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param('sssssssi', $data['nombre'], $data['apellidos'], $data['dni'], $data['email'], $hashed_password, $data['tarjetaC'], $data['role'], $data['id']);
+    } else {
+        $query = "INSERT INTO Usuarios (nombre, apellidos, dni, email, clave, num_tarjeta_credito, rol) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($query);
+        $hashed_password = password_hash($data['password'], PASSWORD_BCRYPT);
+        $stmt->bind_param('sssssss', $data['nombre'], $data['apellidos'], $data['dni'], $data['email'], $hashed_password, $data['tarjetaC'], $data['role']);
+    }
 
     if ($stmt->execute()) {
         return $conn->insert_id;
@@ -86,18 +91,48 @@ function createUser($data)
 function procesarRegistro(&$datos, &$errores, &$confirmacion)
 {
     global $conn;
+    if(isset($_POST['accion']) && $_POST['accion'] == 'editar') {
+        $id = $_POST['id'];
 
-    $datos = [
-        'nombre' => $_POST['nombre'] ?? '',
-        'apellidos' => $_POST['apellidos'] ?? '',
-        'dni' => $_POST['dni'] ?? '',
-        'fecha_nacimiento' => $_POST['fecha_nacimiento'] ?? '',
-        'nacionalidad' => $_POST['nacionalidad'] ?? 'España',
-        'tarjetaC' => $_POST['tarjetaC'] ?? '',
-        'correo' => $_POST['correo'] ?? '',
-        'password' => $_POST['password'] ?? '',
-        'password2' => $_POST['password2'] ?? ''
-    ];
+        // Obtener los datos del usuario con el id especificado
+        $query = "SELECT * FROM Usuarios WHERE id_usuario = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+
+            $datos = [
+                'id' => $_POST['id'],
+                'nombre' => $row['nombre'] ?? '',
+                'apellidos' => $row['apellidos'] ?? '',
+                'dni' => $row['dni'] ?? '',
+                'fecha_nacimiento' => $row['fecha_nacimiento'] ?? '',
+                'nacionalidad' => $row['nacionalidad'] ?? 'España',
+                'tarjetaC' => $row['num_tarjeta_credito'] ?? '',
+                'correo' => $row['email'] ?? '',
+                'password' => $row['clave'] ?? '',
+                'password2' => $row['clave'] ?? ''
+            ];
+        } else {
+            $errores = ['general' => 'No se encontró el usuario especificado'];
+        }
+    }else{
+        $datos = [
+            'nombre' => $_POST['nombre'] ?? '',
+            'apellidos' => $_POST['apellidos'] ?? '',
+            'dni' => $_POST['dni'] ?? '',
+            'fecha_nacimiento' => $_POST['fecha_nacimiento'] ?? '',
+            'nacionalidad' => $_POST['nacionalidad'] ?? 'España',
+            'tarjetaC' => $_POST['tarjetaC'] ?? '',
+            'correo' => $_POST['correo'] ?? '',
+            'password' => $_POST['password'] ?? '',
+            'password2' => $_POST['password2'] ?? ''
+        ];
+    }
+
 
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
@@ -110,25 +145,34 @@ function procesarRegistro(&$datos, &$errores, &$confirmacion)
         } else {
             if (empty($errores)) {
 
-                // Preparar los datos para la función createUser
-                $userData = [
-                    'nombre' => $datos['nombre'],
-                    'apellidos' => $datos['apellidos'],
-                    'dni' => $datos['dni'],
-                    'email' => $datos['correo'],
-                    'password' => $datos['password'],
-                    'tarjetaC' => $datos['tarjetaC'],
-                    'role' => 'Cliente' // Aquí puedes asignar el rol que necesites
-                ];
+                if($_POST['accion'] == 'editar'){
+                    $userData = [
+                        'id' => $datos['id'],
+                        'nombre' => $datos['nombre'],
+                        'apellidos' => $datos['apellidos'],
+                        'dni' => $datos['dni'],
+                        'email' => $datos['correo'],
+                        'password' => $datos['password'],
+                        'tarjetaC' => $datos['tarjetaC'],
+                        'role' => 'Cliente' // Aquí puedes asignar el rol que necesites //se tiene que poder editar
+                    ];
+                }else{
+                    // Preparar los datos para la función createUser
+                    $userData = [
+                        'nombre' => $datos['nombre'],
+                        'apellidos' => $datos['apellidos'],
+                        'dni' => $datos['dni'],
+                        'email' => $datos['correo'],
+                        'password' => $datos['password'],
+                        'tarjetaC' => $datos['tarjetaC'],
+                        'role' => 'Cliente' // Aquí puedes asignar el rol que necesites
+                    ];
+                }
 
                 // Llamar a la función createUser
                 $userId = createUser($userData);
 
                 if ($userId) {
-                    // Iniciar sesión para el usuario y redirigir a la página de inicio
-                    session_start();
-                    $_SESSION['usuario'] = $datos['correo'];
-                    // Redirigir a la página de inicio
                     header("Location: index.php");
                     // exit();
                 } else {
@@ -151,19 +195,19 @@ function HTMLregistro($datos = [], $errores = [], $confirmacion = false)
         <form action="" method="POST" enctype="multipart/form-data" novalidate>
             <input type="hidden" id="version_formulario" name="version_formulario" value="1.0">
 
-            <?php if ($confirmacion) : ?>
+            <?php if ($confirmacion ) : ?>
                 <fieldset class="datos-personales">
                     <legend>Confirmación de datos personales</legend>
                     <div class="fila">
                         <div class="columna columna-nombre-apellidos">
                             <label for="nombre">
                                 Nombre:
-                                <input type="text" id="nombre" name="nombre" value="<?= htmlspecialchars($datos['nombre']) ?>" readonly>
+                                <input type="text" id="nombre" name="nombre" value="<?= htmlspecialchars($datos['nombre']) ?>" $readonly>
                             </label>
 
                             <label for="apellidos">
                                 Apellidos:
-                                <input type="text" id="apellidos" name="apellidos" value="<?= htmlspecialchars($datos['apellidos']) ?>" readonly>
+                                <input type="text" id="apellidos" name="apellidos" value="<?= htmlspecialchars($datos['apellidos']) ?>" $readonly>
                             </label>
                         </div>
                     </div>
@@ -171,23 +215,23 @@ function HTMLregistro($datos = [], $errores = [], $confirmacion = false)
                         <div class="columna">
                             <label for="dni">
                                 DNI:
-                                <input type="text" id="dni" name="dni" value="<?= htmlspecialchars($datos['dni']) ?>" readonly>
+                                <input type="text" id="dni" name="dni" value="<?= htmlspecialchars($datos['dni']) ?>" $readonly>
                             </label>
 
                             <label for="fecha-nacimiento">
                                 F. nacimiento:
-                                <input type="date" id="fecha-nacimiento" name="fecha_nacimiento" value="<?= htmlspecialchars($datos['fecha_nacimiento']) ?>" readonly>
+                                <input type="date" id="fecha-nacimiento" name="fecha_nacimiento" value="<?= htmlspecialchars($datos['fecha_nacimiento']) ?>" $readonly>
                             </label>
                         </div>
                         <div class="columna">
                             <label for="nacionalidad">
                                 Nacionalidad:
-                                <input type="text" id="nacionalidad" name="nacionalidad" value="<?= htmlspecialchars($datos['nacionalidad']) ?>" readonly>
+                                <input type="text" id="nacionalidad" name="nacionalidad" value="<?= htmlspecialchars($datos['nacionalidad']) ?>" $readonly>
                             </label>
 
                             <label for="tarjetaC">
                                 Tarjeta:
-                                <input type="text" id="tarjetaC" name="tarjetaC" value="<?= htmlspecialchars($datos['tarjetaC']) ?>" readonly>
+                                <input type="text" id="tarjetaC" name="tarjetaC" value="<?= htmlspecialchars($datos['tarjetaC']) ?>" $readonly>
                             </label>
                         </div>
                     </div>
@@ -199,7 +243,7 @@ function HTMLregistro($datos = [], $errores = [], $confirmacion = false)
                         <div class="columna">
                             <label for="correo">
                                 E-mail:
-                                <input type="email" id="correo" name="correo" value="<?= htmlspecialchars($datos['correo']) ?>" readonly>
+                                <input type="email" id="correo" name="correo" value="<?= htmlspecialchars($datos['correo']) ?>" $readonly>
                             </label>
                         </div>
                     </div>
@@ -207,7 +251,7 @@ function HTMLregistro($datos = [], $errores = [], $confirmacion = false)
                         <div class="columna">
                             <label for="password">
                                 Clave:
-                                <input type="password" id="password" name="password" value="<?= htmlspecialchars($datos['password']) ?>" readonly>
+                                <input type="password" id="password" name="password" value="<?= htmlspecialchars($datos['password']) ?>" $readonly>
                             </label>
                         </div>
                     </div>
@@ -303,6 +347,7 @@ function HTMLregistro($datos = [], $errores = [], $confirmacion = false)
                         </div>
                     </div>
                 </fieldset>
+                <input type='hidden' name='id' value=<?= $datos['id']?>>
                 <input type="submit" name="enviar" value="Enviar datos">
             <?php endif; ?>
         </form>
