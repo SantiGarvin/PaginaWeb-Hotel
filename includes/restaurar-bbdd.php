@@ -1,6 +1,6 @@
 <?php
 // Incluir el archivo de conexión a la base de datos
-include 'conexion.php'; // Asegúrate de que este archivo contiene la conexión global $conn
+include 'include/db-connection.php'; // Asegúrate de que este archivo contiene la conexión global $conn
 
 global $conn;
 
