@@ -12,7 +12,7 @@ function HTMLfooter($autor, $enlaceDocumentacion, $enlaceRestauracion) {
             $autor
         </p>
         <p><a href="$enlaceDocumentacion">Documento PDF documentación</a></p>
-        <p><a href="$enlaceRestauracion">Fichero de datos restauración BBDD</a></p>
+        <p><a href="includes/restaurar.php?restore=true">Fichero de datos restauración BBDD</a></p>
     </footer>
     HTML;
 }

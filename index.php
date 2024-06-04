@@ -30,7 +30,7 @@ $error = '';
 
 
 // Variables de DEBUG y simulación de usuario
-$debug = true;
+$debug = false;
 
 // Variables con los datos del autor y los enlaces (información para el footer)
 $autores = "Diego Sánchez Vargas y Santiago Garvín Pérez";
