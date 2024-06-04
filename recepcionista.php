@@ -66,7 +66,7 @@ function HTMLreservations() {
         <h1>Gestión de Reservas</h1>
         <ul>
             <li><a href="?p=4&action=view_clients">Ver Clientes</a></li>
-            <li><a href="?p=4&action=add_client">Añadir Cliente</a></li>
+            <li><a href="?p=3">Añadir Cliente</a></li>
             <li><a href="?p=4&action=view_rooms">Ver Habitaciones</a></li>
             <li><a href="?p=4&action=add_room">Añadir Habitación</a></li>
             <li><a href="?p=4&action=view_reservations">Ver Reservas</a></li>
