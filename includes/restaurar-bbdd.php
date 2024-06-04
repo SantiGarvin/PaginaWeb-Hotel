@@ -7,12 +7,15 @@ global $conn;
 
 if (isset($_GET['restore'])) {
 
-    // Drop all tables
-    $tables = $conn->query("SHOW TABLES");
-    while ($row = $tables->fetch_assoc()) {
-        $tableName = $row['Tables_in_database_name'];
-        $conn->query("DROP TABLE IF EXISTS $tableName");
-    }
+
+    // Drop all tables from the database
+    $conn->query("DROP TABLE IF EXISTS Reservas");
+    $conn->query("DROP TABLE IF EXISTS Fotografias");
+    $conn->query("DROP TABLE IF EXISTS Logs");
+    $conn->query("DROP TABLE IF EXISTS Usuarios");
+    $conn->query("DROP TABLE IF EXISTS Habitaciones");
+
+
 
     // Ruta al archivo SQL
     $filePath = '../sql/backup.sql';

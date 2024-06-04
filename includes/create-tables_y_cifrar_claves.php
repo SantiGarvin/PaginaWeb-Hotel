@@ -16,6 +16,7 @@ function cifrarClaves() {
 
     echo "Contraseñas actualizadas.";
 }
+/*
 
 // Función para ejecutar archivos SQL
 function ejecutarSQLArchivo($conn, $archivo) {
@@ -47,7 +48,7 @@ foreach ($sqlFiles as $file) {
 }
 
 echo "Tablas creadas exitosamente.";
-
+*/
 cifrarClaves();
 
 ?>
