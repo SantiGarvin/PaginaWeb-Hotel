@@ -45,6 +45,10 @@
     color: red;
 }
 
+select # {
+    position: static;
+}
+
 @media screen and (max-width: 600px) {
     .reservation__room-type {
         display: none;

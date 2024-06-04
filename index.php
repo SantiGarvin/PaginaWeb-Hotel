@@ -4,7 +4,7 @@ require_once 'includes/aside.php';
 require_once 'inicio.php';
 require_once 'room.php';
 require_once 'servicios.php';
-require_once 'reservations.php';
+require_once 'recepcionista.php';
 require_once 'registro.php';
 require_once 'reservar.php';
 require_once 'mi-cuenta.php';
