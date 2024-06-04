@@ -14,6 +14,10 @@ function HTMLaside()
   $capacidadTotal = CapacidadTotal();
   $huespedesAlojados = NHuespedesAlojados();
 
+  if($huespedesAlojados == null){
+    $huespedesAlojados = 0;
+  }
+
 
 
   $error = '';
@@ -84,7 +88,7 @@ function HTMLaside()
         <p>Nº total de habitaciones: <?= htmlspecialchars($totalHabitaciones ?? '') ?></p>
         <p>Nº de habitaciones libres: <?= htmlspecialchars($habitacionesLibres ?? '') ?></p>
         <p>Capacidad total del hotel: <?= htmlspecialchars($capacidadTotal ?? '') ?> huéspedes</p>
-        <p>Nº de huéspedes alojados: <?= htmlspecialchars($huespedesAlojados ?? '0') ?></p>
+        <p>Nº de huéspedes alojados: <?= htmlspecialchars($huespedesAlojados ?? '') ?></p>
       </div>
     </aside>
 <?php

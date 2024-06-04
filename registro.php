@@ -1,5 +1,7 @@
 <?php
 
+require_once 'includes/db-connection.php';
+
 function validarDNI($dni)
 {
     $numbers = substr($dni, 0, -1);
@@ -64,8 +66,27 @@ function validarDatos($datos)
     return $errores;
 }
 
+function createUser($data)
+{
+    global $conn;
+
+    $query = "INSERT INTO Usuarios (nombre, apellidos, dni, email, clave, num_tarjeta_credito, rol) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($query);
+
+    $hashed_password = password_hash($data['password'], PASSWORD_BCRYPT);
+    $stmt->bind_param('sssssss', $data['nombre'], $data['apellidos'], $data['dni'], $data['email'], $hashed_password, $data['tarjetaC'], $data['role']);
+
+    if ($stmt->execute()) {
+        return $conn->insert_id;
+    } else {
+        return false;
+    }
+}
+
 function procesarRegistro(&$datos, &$errores, &$confirmacion)
 {
+    global $conn;
+
     $datos = [
         'nombre' => $_POST['nombre'] ?? '',
         'apellidos' => $_POST['apellidos'] ?? '',
@@ -88,19 +109,20 @@ function procesarRegistro(&$datos, &$errores, &$confirmacion)
             }
         } else {
             if (empty($errores)) {
-                // Crear una instancia de la clase Api
-                $api = new Api();
 
                 // Preparar los datos para la función createUser
                 $userData = [
-                    'name' => $datos['nombre'] . ' ' . $datos['apellidos'],
+                    'nombre' => $datos['nombre'],
+                    'apellidos' => $datos['apellidos'],
+                    'dni' => $datos['dni'],
                     'email' => $datos['correo'],
                     'password' => $datos['password'],
-                    'role' => 'user' // Aquí puedes asignar el rol que necesites
+                    'tarjetaC' => $datos['tarjetaC'],
+                    'role' => 'Cliente' // Aquí puedes asignar el rol que necesites
                 ];
 
                 // Llamar a la función createUser
-                $userId = $api->createUser($userData);
+                $userId = createUser($userData);
 
                 if ($userId) {
                     // Iniciar sesión para el usuario y redirigir a la página de inicio

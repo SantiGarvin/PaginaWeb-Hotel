@@ -61,5 +61,7 @@ if (isset($_GET['restore'])) {
     }
 
     cifrarClaves();
+
+    header('Location: ../index.php');
 }
 ?>
