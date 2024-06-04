@@ -2,6 +2,7 @@
 
 require_once 'includes/db-connection.php';
 require_once 'includes/Session.php';
+require_once 'registro.php';
 
 function HTMLmicuenta()
 {
@@ -12,11 +13,47 @@ function HTMLmicuenta()
     $dni = isset(Session::get('user')['dni']) ? Session::get('user')['dni'] : '';
     $email = isset(Session::get('user')['email']) ? Session::get('user')['email'] : '';
     $tarjeta = isset(Session::get('user')['num_tarjeta_credito']) ? Session::get('user')['num_tarjeta_credito'] : '';
-    $fecha_nacimiento = isset(Session::get('user')['fecha_nacimiento']) ? Session::get('user')['fecha_nacimiento'] : '';
     $nacionalidad = isset(Session::get('user')['nacionalidad']) ? Session::get('user')['nacionalidad'] : '';
     
+    
+    // Actualizar datos personales/////////////////////
 
-    // Obtener reservas del usuario
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['enviar'])) {
+        $nombre = $_POST['nombre'];
+        $apellidos = $_POST['apellidos'];
+        $dni = $_POST['dni'];
+        $email = $_POST['correo'];
+        $tarjeta = $_POST['tarjetaC'];
+        $nacionalidad = $_POST['nacionalidad'];
+        $password = $_POST['password'];
+
+        // Asegúrate de validar y sanear los datos aquí antes de insertarlos en la base de datos
+        $errores = validarDatos($_POST);
+        if (count($errores) === 0) {
+            $sql = "UPDATE Usuarios SET nombre = ?, apellidos = ?, dni = ?, email = ?, num_tarjeta_credito = ?, nacionalidad = ?, password = ? WHERE id_usuario = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sssssssi", $nombre, $apellidos, $dni, $email, $tarjeta, $nacionalidad, $password, Session::get('user')['id_usuario']);
+            $stmt->execute();
+
+            // Actualizar los datos de la sesión
+            $user = Session::get('user');
+            $user['nombre'] = $nombre;
+            $user['apellidos'] = $apellidos;
+            $user['dni'] = $dni;
+            $user['email'] = $email;
+            $user['num_tarjeta_credito'] = $tarjeta;
+            $user['nacionalidad'] = $nacionalidad;
+            Session::set('user', $user);
+        } else {
+            // Manejar los errores
+            foreach ($errores as $campo => $mensaje) {
+                echo "<p>Error en el campo $campo: $mensaje</p>";
+            }
+        }
+    }
+
+
+    // Obtener reservas del usuario/////////////////////
     $sql = "SELECT id_reserva, dia_entrada, dia_salida, estado, comentarios, num_personas FROM Reservas WHERE id_cliente = ?";    $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", Session::get('user')['id_usuario']);
     $stmt->execute();
@@ -63,24 +100,23 @@ function HTMLmicuenta()
         $id_reserva = $_POST['id'];
     }
 
-
     return <<<HTML
     <main class="main-content">
         <section class="seccion-datos">
             <h2>Gestión de Datos Personales</h2>
             <p>En esta sección puede modificar sus datos personales y de acceso.</p>
-            <form method="post" action="procesar_datos.php">
+            <form method="post" action="" novalidate>
                 <fieldset class="datos-personales">
                     <legend>Datos personales</legend>
                     <div class="fila">
                         <div class="columna columna-nombre-apellidos">
                             <label for="nombre">
                                 Nombre:
-                                <input type="text" id="nombre" name="nombre" placeholder="(Obligatorio)" required size="20" maxlength="40" value="$nombre" disabled>
+                                <input type="text" id="nombre" name="nombre" placeholder="(Obligatorio)" required size="20" maxlength="40" value="$nombre" readonly>
                             </label>
                             <label for="apellidos">
                                 Apellidos:
-                                <input type="text" id="apellidos" name="apellidos" title="Este campo es opcional" value="$apellidos" disabled>
+                                <input type="text" id="apellidos" name="apellidos" title="Este campo es opcional" value="$apellidos" readonly>
                             </label>
                         </div>
                     </div>
@@ -88,12 +124,9 @@ function HTMLmicuenta()
                         <div class="columna">
                             <label for="dni">
                                 DNI:
-                                <input type="text" id="dni" name="dni" placeholder="12345678A" required pattern="[0-9]{8}[A-Z]" value="$dni" disabled>
+                                <input type="text" id="dni" name="dni" placeholder="12345678A" required pattern="[0-9]{8}[A-Z]" value="$dni" readonly>
                             </label>
-                            <label for="fecha-nacimiento">
-                                F. nacimiento:
-                                <input type="date" id="fecha-nacimiento" name="fecha_nacimiento" value="$fecha_nacimiento" required>
-                            </label>
+
                         </div>
                         <div class="columna">
                             <label for="nacionalidad">
