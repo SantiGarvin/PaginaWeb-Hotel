@@ -1,9 +1,6 @@
 <?php
-require_once 'includes/header.php';
-require_once 'includes/footer.php';
-require_once 'includes/navbar.php';
+require_once 'includes/header_navbar_footer_login_procesarE.php';
 require_once 'includes/aside.php';
-require_once 'includes/pagina-error.php';
 require_once 'inicio.php';
 require_once 'room.php';
 require_once 'servicios.php';

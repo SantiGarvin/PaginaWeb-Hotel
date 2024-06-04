@@ -2,6 +2,20 @@
 
 require_once 'db-connection.php';
 
+
+function cifrarClave() {
+    // Solo ejecuta esto una vez para encriptar las contraseñas existentes
+    $result = $conn->query('SELECT id_usuario, clave FROM Usuarios');
+    while ($row = $result->fetch_assoc()) {
+        $hashed_password = password_hash($row['clave'], PASSWORD_DEFAULT);
+        $update_stmt = $conn->prepare('UPDATE Usuarios SET clave = ? WHERE id_usuario = ?');
+        $update_stmt->bind_param('si', $hashed_password, $row['id_usuario']);
+        $update_stmt->execute();
+    }
+
+    echo "Contraseñas actualizadas.";
+}
+
 // Función para ejecutar archivos SQL
 function ejecutarSQLArchivo($conn, $archivo) {
     $sql = file_get_contents($archivo);
@@ -33,4 +47,7 @@ foreach ($sqlFiles as $file) {
 
 echo "Tablas creadas exitosamente.";
 
+cifrarClave();
+
 $conn->close();
+?>
