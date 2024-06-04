@@ -92,7 +92,6 @@ function handleReceptionistActions()
     if (isset($_GET['action'])) {
         return match ($_GET['action']) {
             'view_clients'          => viewClients(),
-            'add_client'            => addClientForm(),
             'edit_client'           => editClientForm($_GET['id']),
             'delete_client'         => deleteClient($_GET['id']),
             'view_rooms'            => viewRooms(),
@@ -231,6 +230,13 @@ function editClientForm($id)
         </form>';
     } else {
         return "<p>Usuario no encontrado.</p>";
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['edicion'])) {
+        $id = $_POST['id'];
+        echo updateClient($id);
     }
 }
 
