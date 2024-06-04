@@ -150,6 +150,7 @@ function uploadPhotos()
     echo json_encode($response);
 }
 
+
 function deletePhoto()
 {
     global $conn;

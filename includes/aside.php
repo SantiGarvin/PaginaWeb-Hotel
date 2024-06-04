@@ -32,11 +32,14 @@ function HTMLaside()
 
 
 
-  if (!Session::isSessionOpen()) {
-    Session::set('nombre', $username);
-  } else {
+  if (Session::isSessionOpen()) {
+    // Session::set('nombre', $username);
     $nombreUsuario = isset(Session::get('user')['nombre']) ? Session::get('user')['nombre'] : '';
+  } else {
+    $nombreUsuario = '';
   }
+  // } else {
+  // }
 
 
   if (isset($_POST['logout'])) {
