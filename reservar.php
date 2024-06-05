@@ -122,6 +122,7 @@ function InsertarReserva($id_habitacion, $num_personas, $comentarios, $dia_entra
             VALUES ($id_usuario, $id_habitacion, $num_personas, '$comentarios', '$dia_entrada', '$dia_salida', 'Pendiente')";    
     if ($conn->query($sql) === TRUE) {
         //echo "Reserva creada correctamente";
+        Session::set('id_reserva_reciente', $conn->insert_id); // Guardar el ID de la reserva recién insertada
         createlogAccion($id_usuario, "Reserva creada correctamente");
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
@@ -186,8 +187,9 @@ function HTMLreservar($intervalo = '30 SECOND') {
         $fecha_salida = $_POST['fecha_salida'];
         $capacidad = $_POST['n-personas'];
         $comentarios = $_POST['comentarios'];
-        $id_usuario_manual = $_POST['id_usuario_manual'];
-
+        if(isset($_POST['id_usuario_manual'])){
+            $id_usuario_manual = $_POST['id_usuario_manual'];
+        }
         
         if ($_POST['accion'] == 'modificar') {
         
@@ -212,7 +214,6 @@ function HTMLreservar($intervalo = '30 SECOND') {
                     }else{
                         InsertarReserva($reserva_en_proceso['id_habitacion'], $capacidad, $comentarios, $fecha_entrada, $fecha_salida, Session::get('user')['id_usuario']);
                     } 
-                    Session::set('id_reserva_reciente', $conn->insert_id); // Guardar el ID de la reserva recién insertada
                     $reserva_creada = '<div class="error">Reserva creada correctamente</div>';  
 
                 } else {
@@ -270,7 +271,7 @@ function HTMLreservar($intervalo = '30 SECOND') {
             <input type="hidden" id="accion" name="accion" value="$accion">
             
     HTML;
-
+    
     if (Session::get('id_recepcionista')) {
         $AUX .= <<<HTML
             <fieldset class="datos-reserva">
@@ -287,10 +288,11 @@ function HTMLreservar($intervalo = '30 SECOND') {
         HTML;
     }
     
+    if (isset($error_div)) {
+        $AUX .= $errorDiv;
+    }
 
     $AUX .= <<<HTML
-
-            $errorDiv
 
             <fieldset class="datos-reserva">
                 <legend>Datos reserva</legend>
