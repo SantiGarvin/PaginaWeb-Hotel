@@ -62,7 +62,7 @@ $head = HTMLhead("Proyecto Final", $estilos);
 $header = HTMLheader();
 $menu = HTMLnavbar($menu, $opc, 'activo');
 $aside = HTMLaside(); 
-$footer = HTMLfooter($autores, ".", "");
+$footer = HTMLfooter($autores, "ProyectoFinalTW.pdf", "");
 $intervalo_tiempo_borrado_reservas = '30 SECOND';  // Intervalo de tiempo para borrar las reservas antiguas
 
 $cuerpo = match ($opc) {
