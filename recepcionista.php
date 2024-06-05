@@ -60,8 +60,6 @@ function NHuespedesAlojados()
     }
 }
 
-
-
 function HTMLreservations()
 {
     ob_start();
@@ -75,7 +73,7 @@ function HTMLreservations()
             <li><a href="?p=4&action=view_rooms">Ver Habitaciones</a></li>
             <li><a href="?p=4&action=add_room">Añadir Habitación</a></li>
             <li><a href="?p=4&action=view_reservations">Ver Reservas</a></li>
-            <li><a href="#" onclick="submitAddReservationForm(); return false;">Añadir Reserva</a></li>
+            <li><a href="#" onclick="document.getElementById('addReservationForm').submit(); return false;">Añadir Reserva</a></li>
         </ul>
         <form id="addReservationForm" action="index.php?p=5" method="post" style="display:none;">
             <input type="hidden" name="id_rece" value="<?= $id_rece ?>">
@@ -83,11 +81,6 @@ function HTMLreservations()
         </form>
         <?= handleReceptionistActions(); ?>
     </div>
-    <script>
-        function submitAddReservationForm() {
-            document.getElementById('addReservationForm').submit();
-        }
-    </script>
 <?php
     return ob_get_clean();
 }
@@ -120,23 +113,33 @@ function handleReceptionistActions()
     }
 }
 
-
 function uploadPhotos()
 {
     global $conn;
     $id_habitacion = isset($_POST['id_habitacion']) ? $_POST['id_habitacion'] : null;
-    $response = ['success' => false, 'message' => '', 'photos' => []];
 
     if (empty($id_habitacion)) {
-        $response['message'] = "ID de habitación no proporcionado.";
-        echo json_encode($response);
+        echo "ID de habitación no proporcionado.";
         return;
     }
 
     if (!isset($_FILES['photos'])) {
-        $response['message'] = "No se han subido fotos.";
-        echo json_encode($response);
+        echo "No se han subido fotos.";
         return;
+    }
+
+    // Check the size of each image
+    $max_size = 16 * 1024 * 1024; // 16MB
+    foreach ($_FILES['photos']['tmp_name'] as $index => $tmpName) {
+        if (is_uploaded_file($tmpName)) {
+            if ($_FILES['photos']['size'][$index] > $max_size) {
+                echo "La imagen " . $_FILES['photos']['name'][$index] . " es demasiado grande.";
+                return;
+            }
+        } else {
+            echo "Error al subir el archivo " . $_FILES['photos']['name'][$index] . ".";
+            return;
+        }
     }
 
     foreach ($_FILES['photos']['tmp_name'] as $index => $tmpName) {
@@ -148,44 +151,39 @@ function uploadPhotos()
             $stmt->bind_param("iss", $id_habitacion, $fileName, $fileData);
             if ($stmt->execute()) {
                 $photo_id = $stmt->insert_id;
-                $response['photos'][] = [
-                    'id_fotografia' => $photo_id,
-                    'nombre_archivo' => $fileName,
-                    'imagen' => base64_encode($fileData)
-                ];
             } else {
-                $response['message'] = "Error al guardar la foto en la base de datos.";
+                echo "Error al guardar la foto " . $fileName . " en la base de datos.";
+                return;
             }
             $stmt->close();
         } else {
-            $response['message'] = "Error al subir el archivo.";
+            echo "Error al subir el archivo " . $_FILES['photos']['name'][$index] . ".";
+            return;
         }
     }
 
-    if (empty($response['message'])) {
-        $response['success'] = true;
-    }
-
-    echo json_encode($response);
+    echo "Fotos subidas y guardadas exitosamente.";
 }
 
 function deletePhoto()
 {
     global $conn;
     $id_fotografia = $_POST['id_fotografia'];
-    $response = ['success' => false, 'message' => ''];
+
+    if (empty($id_fotografia)) {
+        echo "ID de fotografía no proporcionado.";
+        return;
+    }
 
     $sql = "DELETE FROM Fotografias WHERE id_fotografia = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id_fotografia);
     if ($stmt->execute()) {
-        $response['success'] = true;
+        echo "Foto eliminada correctamente.";
     } else {
-        $response['message'] = "Error al eliminar la foto de la base de datos.";
+        echo "Error al eliminar la foto de la base de datos.";
     }
     $stmt->close();
-
-    echo json_encode($response);
 }
 
 
@@ -300,7 +298,7 @@ function viewRooms()
     global $conn;
     $sql = "SELECT * FROM Habitaciones";
     $result = $conn->query($sql);
-    $output = "<h2>Lista de Habitaciones</h2><table><tr><th>ID</th><th>Número</th><th>Capacidad</th><th>Precio por Noche</th><th>Descripción</th><th>Imágenes</th><th>Estado</th><th>Acciones</th></tr>";
+    $output = "<h2>Lista de Habitaciones</h2><table><tr><th>ID</th><th>Número</th><th>Capacidad</th><th>Precio por Noche</th><th>Descripción</th><th>Número de Imágenes</th><th>Estado</th><th>Acciones</th></tr>";
     while ($row = $result->fetch_assoc()) {
         $output .= "<tr>
             <td>{$row['id_habitacion']}</td>
@@ -315,7 +313,10 @@ function viewRooms()
                     <input type='hidden' name='id_habitacion' value='{$row['id_habitacion']}'>
                     <button type='submit'>Editar</button>
                 </form>
-                <a href='?p=4&action=delete_room&id={$row['id_habitacion']}'>Eliminar</a>
+                <form action='index.php?p=4&action=delete_room' method='post' style='display:inline;'>
+                    <input type='hidden' name='id_habitacion' value='{$row['id_habitacion']}'>
+                    <button type='submit'>Eliminar</button>
+                </form>
             </td>
         </tr>";
     }
@@ -323,13 +324,11 @@ function viewRooms()
     return $output;
 }
 
-
-
 function addRoomForm()
 {
     return '
     <h2>Añadir Habitación</h2>
-    <form id="addRoomForm" action="index.php?p=4&action=save_room" method="post" onsubmit="return validateForm()" novalidate>
+    <form id="addRoomForm" action="index.php?p=4&action=save_room" method="post" novalidate>
         <label for="numero">Número de Habitación:</label>
         <input type="text" id="numero" name="numero" required>
         <label for="capacidad">Capacidad:</label>
@@ -342,26 +341,7 @@ function addRoomForm()
         <input type="number" id="n-imagenes" name="n-imagenes" required>
         <button type="submit">Guardar</button>
         <span id="error-message" class="error-message"></span>
-    </form>
-    <script>
-    function validateForm() {
-        // Get form elements
-        var numero = document.getElementById("numero").value;
-        var capacidad = document.getElementById("capacidad").value;
-        var precio_por_noche = document.getElementById("precio_por_noche").value;
-        var descripcion = document.getElementById("descripcion").value;
-        var n_imagenes = document.getElementById("n-imagenes").value;
-        var errorMessage = document.getElementById("error-message");
-
-        // Check if all fields are filled
-        if (!numero || !capacidad || !precio_por_noche || !descripcion || !n_imagenes) {
-            errorMessage.textContent = "Por favor, completa todos los campos.";
-            return false; // Prevent form submission
-        }
-        
-        return true; // Allow form submission
-    }
-    </script>';
+    </form>';
 }
 
 function saveRoom()
@@ -402,7 +382,10 @@ function editRoomForm($id)
         while ($photo = $photos_result->fetch_assoc()) {
             $photos_html .= "<div id='photo_{$photo['id_fotografia']}'>
                 <img src='data:image/jpeg;base64," . base64_encode($photo['imagen']) . "' alt='{$photo['nombre_archivo']}' width='100'>
-                <button type='button' onclick='deletePhoto({$photo['id_fotografia']})'>Eliminar</button>
+                <form action='index.php?p=4&action=delete_photo' method='post'>
+                    <input type='hidden' name='id_fotografia' value='{$photo['id_fotografia']}'>
+                    <button type='submit'>Eliminar</button>
+                </form>
             </div>";
         }
 
@@ -432,56 +415,11 @@ function editRoomForm($id)
         <div id="photoList">
             ' . $photos_html . '
         </div>
-        <form id="uploadPhotoForm" enctype="multipart/form-data" method="post">
-            <input type="hidden" name="id_habitacion" value="<?= $id_habitacion ?>">
+        <form id="uploadPhotoForm" action="index.php?p=4&action=upload_photos" enctype="multipart/form-data" method="post">
+            <input type="hidden" name="id_habitacion" value="' . $id . '">
             <input type="file" id="photos" name="photos[]" multiple required>
-            <button type="button" onclick="uploadPhotos(<?= $id_habitacion ?>)">Subir Fotos</button>
-        </form>
-    
-        <script>
-        function deletePhoto(photoId) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "index.php?p=4&action=delete_photo", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        document.getElementById("photo_" + photoId).remove();
-                    } else {
-                        alert("Error al eliminar la foto: " + response.message);
-                    }
-                }
-            };
-            xhr.send("id_fotografia=" + photoId);
-        }
-
-        function uploadPhotos(roomId) {
-            var formData = new FormData(document.getElementById("uploadPhotoForm"));
-            formData.append("id_habitacion", roomId);
-
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "index.php?p=4&action=upload_photos", true);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        // Append new photos to the list
-                        var photoList = document.getElementById("photoList");
-                        response.photos.forEach(function(photo) {
-                            var div = document.createElement("div");
-                            div.id = "photo_" + photo.id_fotografia;
-                            div.innerHTML = "<img src=\"data:image/jpeg;base64," + photo.imagen + "\" alt=\"" + photo.nombre_archivo + "\" width=\"100\"><button type=\"button\" onclick=\"deletePhoto(" + photo.id_fotografia + ")\">Eliminar</button>";
-                            photoList.appendChild(div);
-                        });
-                    } else {
-                        alert("Error al subir las fotos: " + response.message);
-                    }
-                }
-            };
-            xhr.send(formData);
-        }
-        </script>';
+            <button type="submit">Subir Fotos</button>
+        </form>';
     } else {
         return "<p>Habitación no encontrada.</p>";
     }

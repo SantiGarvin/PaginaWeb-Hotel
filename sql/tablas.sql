@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS Fotografias (
     `id_fotografia` int NOT NULL AUTO_INCREMENT,
     `id_habitacion` int NOT NULL,
     `nombre_archivo` varchar(255) COLLATE utf8mb4_spanish_ci NOT NULL,
-    `imagen` blob NOT NULL,
+    `imagen` longblob NOT NULL,
     PRIMARY KEY (`id_fotografia`),
     FOREIGN KEY (`id_habitacion`) REFERENCES `Habitaciones`(`id_habitacion`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
@@ -50,5 +50,5 @@ CREATE TABLE IF NOT EXISTS Logs (
     id_usuario INT NOT NULL,
     fecha_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     descripcion TEXT NOT NULL,
-    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
+    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario) ON DELETE CASCADE;
 );
