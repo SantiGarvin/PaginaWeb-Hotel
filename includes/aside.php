@@ -2,6 +2,7 @@
 require_once 'includes/Session.php';
 require_once 'includes/autenticacion.php';
 include_once 'recepcionista.php';
+require_once 'includes/log.php';
 
 /**
  * Generar aside para login 
@@ -24,7 +25,9 @@ function HTMLaside()
   if (isset($_POST['username']) && isset($_POST['password'])) {
     if (autenticacion()) {
       $user =  Session::get('user');
+      createLogIdentificacion(Session::get('user')['id_usuario']);
       header("Location: " . $_SERVER['PHP_SELF']);
+
     } else {
       $error = 'Usuario o contraseña incorrectos';
     }
@@ -43,6 +46,7 @@ function HTMLaside()
 
 
   if (isset($_POST['logout'])) {
+    createLogDesidentificacion(Session::get('user')['id_usuario']);
     Session::destroy();
     header("Location: " . $_SERVER['PHP_SELF']);
     exit();

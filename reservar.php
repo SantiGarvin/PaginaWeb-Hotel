@@ -2,6 +2,7 @@
 
 require_once 'includes/db-connection.php';
 require_once 'includes/Session.php';
+require_once 'includes/log.php';
 
 function ValidarReserva($fecha_entrada, $fecha_salida, $capacidad)
 {
@@ -121,6 +122,7 @@ function InsertarReserva($id_habitacion, $num_personas, $comentarios, $dia_entra
             VALUES ($id_usuario, $id_habitacion, $num_personas, '$comentarios', '$dia_entrada', '$dia_salida', 'Pendiente')";    
     if ($conn->query($sql) === TRUE) {
         //echo "Reserva creada correctamente";
+        createlogAccion($id_usuario, "Reserva creada correctamente");
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
@@ -246,6 +248,7 @@ function HTMLreservar($intervalo = '30 SECOND') {
         // Eliminar la reserva
         $sql = "DELETE FROM Reservas WHERE id_reserva = $id_reserva_reciente";
         if ($conn->query($sql) === TRUE) {
+            createlogAccion(Session::get('user')['id_usuario'], "Reserva cancelada correctamente");
             $reserva_creada = '<div class="error">Reserva cancelada correctamente</div>';
             Session::set('id_reserva_reciente', null); // Limpiar la variable de sesión
             Session::set('id_recepcionista', null); // Limpiar la variable de sesión

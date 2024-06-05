@@ -195,8 +195,7 @@ function HTMLtreservas() {
 
 function HTMLtlogs() {
     global $conn;
-
-    $query = "SELECT * FROM Logs";
+    $query = "SELECT * FROM Logs ORDER BY id_log DESC LIMIT 20";
     $result = $conn->query($query);
 
     $table = "<table>
@@ -220,6 +219,8 @@ function HTMLtlogs() {
 
     return $table;
 }
+
+
 
 function HTMLadmin(){
     $usuarios = HTMLtusuarios();

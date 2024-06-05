@@ -3,6 +3,7 @@
 require_once 'includes/db-connection.php';
 require_once 'includes/Session.php';
 require_once 'registro.php';
+require_once 'includes/log.php';
 
 function HTMLmicuenta()
 {
@@ -44,6 +45,7 @@ function HTMLmicuenta()
             $user['num_tarjeta_credito'] = $tarjeta;
             Session::set('user', $user);
             echo "<p>Datos actualizados correctamente.</p>";
+            createlogAccion(Session::get('user')['id_usuario'], 'Actualización de datos personales');
         } else {
             // Manejar los errores
             foreach ($errores as $campo => $mensaje) {
@@ -92,6 +94,7 @@ function HTMLmicuenta()
         $stmt->bind_param("i", $id_reserva);
         $stmt->execute();
         $stmt->close();
+        createlogAccion(Session::get('user')['id_usuario'], 'Cancelación de reserva');
         header('Location: ' . $_SERVER['REQUEST_URI']);
     }
 

@@ -1,6 +1,26 @@
 <?php
 
 require_once 'includes/db-connection.php';
+require_once 'includes/log.php';
+
+function obtenerIdUsuario($correo) {
+    global $conn;
+
+    $sql = "SELECT id_usuario FROM Usuarios WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $correo);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // El usuario existe, devuelve su ID
+        $row = $result->fetch_assoc();
+        return $row['id_usuario'];
+    } else {
+        // El usuario no existe
+        return null;
+    }
+}
 
 function validarDNI($dni)
 {
@@ -169,6 +189,13 @@ function procesarRegistro(&$datos, &$errores, &$confirmacion)
                 $userId = createUser($userData);
 
                 if ($userId) {
+                    // Crear un log de registro
+                    if(Session::get('user')['id_usuario']){
+                        $id_para_log = Session::get('user')['id_usuario'];
+                    }else{
+                        $id_para_log = obtenerIdUsuario($userData['email']);
+                    }
+                    createLogRegistro($id_para_log);
                     header("Location: index.php");
                     // exit();
                 } else {
