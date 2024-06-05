@@ -12,15 +12,15 @@ CREATE TABLE IF NOT EXISTS Usuarios (
 
 -- Insertar datos en la tabla Usuarios
 INSERT INTO `Usuarios` (`id_usuario`, `nombre`, `apellidos`, `dni`, `email`, `clave`, `num_tarjeta_credito`, `rol`) VALUES
-(1, 'tia', '', '1', 'tia@void.ugr.es', 'tia', '', 'Administrador'),
-(2, 'abuela', '', '2', 'abuela@void.ugr.es', 'abuela', '', 'Administrador'),
-(3, 'director', '', '3', 'director@void.ugr.es', 'director', '', 'Recepcionista'),
-(4, 'elsuper', '', '4', 'elsuper@void.ugr.es', 'elsuper', '', 'Recepcionista'),
-(5, 'mortadelo', '', '5', 'mortadelo@void.ugr.es', 'mortadelo', '', 'Cliente'),
-(6, 'filemon', '', '6', 'filemon@void.ugr.es', 'filemon', '', 'Cliente'),
-(7, 'bacterio', '', '7', 'bacterio@void.ugr.es', 'bacterio', '', 'Cliente'),
-(8, 'ofelia', '', '8', 'ofelia@void.ugr.es', 'ofelia', '', 'Cliente'),
-(9, 'irma', '', '9', 'irma@void.ugr.es', 'irma', '', 'Cliente');
+(1, 'tia', 'Apellido1', '1', 'tia@void.ugr.es', 'tia', '4242424242424242', 'Administrador'),
+(2, 'abuela', 'Apellido2', '2', 'abuela@void.ugr.es', 'abuela', '4242424242424242', 'Administrador'),
+(3, 'director', 'Apellido3', '3', 'director@void.ugr.es', 'director', '4242424242424242', 'Recepcionista'),
+(4, 'elsuper', 'Apellido4', '4', 'elsuper@void.ugr.es', 'elsuper', '4242424242424242', 'Recepcionista'),
+(5, 'mortadelo', 'Apellido5', '5', 'mortadelo@void.ugr.es', 'mortadelo', '4242424242424242', 'Cliente'),
+(6, 'filemon', 'Apellido6', '6', 'filemon@void.ugr.es', 'filemon', '4242424242424242', 'Cliente'),
+(7, 'bacterio', 'Apellido7', '7', 'bacterio@void.ugr.es', 'bacterio', '4242424242424242', 'Cliente'),
+(8, 'ofelia', 'Apellido8', '8', 'ofelia@void.ugr.es', 'ofelia', '4242424242424242', 'Cliente'),
+(9, 'irma', 'Apellido9', '9', 'irma@void.ugr.es', 'irma', '4242424242424242', 'Cliente');
 
 -- Crear la tabla Habitaciones
 CREATE TABLE IF NOT EXISTS Habitaciones (
