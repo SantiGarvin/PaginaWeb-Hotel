@@ -256,5 +256,3 @@ HTML;
 
     return $AUX;
 }
-
-?>

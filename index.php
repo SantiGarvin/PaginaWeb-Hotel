@@ -11,10 +11,6 @@ require_once 'mi-cuenta.php';
 require_once 'admin.php';
 require_once 'includes/Session.php';
 
-
-// Simulación de tipos de usuario
-// Esto generalmente vendría de una base de datos o un sistema de autenticación
-// Los valores podrían ser 'anonimo', 'Cliente', 'Recepcionista', 'Administrador'
 Session::init();
 
 if (!Session::get('user')) {
@@ -24,9 +20,6 @@ if (!Session::get('user')) {
 $tipo_usuario = Session::get('user')['rol'];
 
 $error = '';
-
-// Variables de DEBUG y simulación de usuario
-$debug = true;
 
 // Variables con los datos del autor y los enlaces (información para el footer)
 $autores = "Diego Sánchez Vargas y Santiago Garvín Pérez";
@@ -83,6 +76,8 @@ $cuerpo = match ($opc) {
     7 => $tipo_usuario === 'Administrador' ? HTMLadmin() : HTMLpag_error(),
     default => HTMLpag_error()
 };
+
+$debug = false;
 
 if ($debug) {
     echo "<pre>";

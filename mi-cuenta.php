@@ -195,5 +195,3 @@ function HTMLmicuenta()
     </main>
 HTML;
 }
-
-?>

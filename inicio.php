@@ -32,5 +32,3 @@ function HTMLpag_inicio()
 	</main>
 	HTML;
 }
-
-?>
