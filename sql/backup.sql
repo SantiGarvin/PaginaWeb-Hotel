@@ -37,19 +37,19 @@ CREATE TABLE IF NOT EXISTS Habitaciones (
 
 -- Insertar datos en la tabla Habitaciones
 INSERT INTO `Habitaciones` (`id_habitacion`, `numero`, `capacidad`, `precio_por_noche`, `descripcion`, `n-imagenes`, `estado`) VALUES
-(101, '101', 2, 25.5, '', 0, 'Operativa'),
-(102, '102', 2, 25.5, '', 0, 'Operativa'),
-(103, '103', 2, 25.5, '', 1, 'Operativa'),
-(104, '104', 2, 25.5, '', 1, 'Operativa'),
-(105, '105', 2, 25.5, '', 2, 'Operativa'),
-(201, '201', 3, 25.5, '', 2, 'Operativa'),
-(202, '202', 3, 25.5, '', 3, 'Operativa'),
-(203, '203', 3, 25.5, '', 3, 'Operativa'),
-(204, '204', 3, 25.5, '', 4, 'Operativa'),
-(301, '301', 4, 25.5, '', 4, 'Operativa'),
-(302, '302', 4, 25.5, '', 0, 'Operativa'),
-(1, 'Suite presidencial', 4, 25.5, '', 0, 'Operativa'),
-(2, 'Suite nupcial', 2, 25.5, '', 0, 'Operativa');
+(101, '101', 2, 25.5, 'Habitación doble con vistas al mar', 0, 'Operativa'),
+(102, '102', 2, 25.5, 'Habitación doble con balcón', 0, 'Operativa'),
+(103, '103', 2, 25.5, 'Habitación doble con terraza', 1, 'Operativa'),
+(104, '104', 2, 25.5, 'Habitación doble estándar', 1, 'Operativa'),
+(105, '105', 2, 25.5, 'Habitación doble con jacuzzi', 2, 'Operativa'),
+(201, '201', 3, 25.5, 'Habitación triple con vistas al mar', 2, 'Operativa'),
+(202, '202', 3, 25.5, 'Habitación triple con balcón', 3, 'Operativa'),
+(203, '203', 3, 25.5, 'Habitación triple con terraza', 3, 'Operativa'),
+(204, '204', 3, 25.5, 'Habitación triple estándar', 4, 'Operativa'),
+(301, '301', 4, 25.5, 'Habitación cuádruple con vistas al mar', 4, 'Operativa'),
+(302, '302', 4, 25.5, 'Habitación cuádruple con balcón', 0, 'Operativa'),
+(1, 'Suite presidencial', 4, 25.5, 'Suite presidencial con vistas panorámicas', 0, 'Operativa'),
+(2, 'Suite nupcial', 2, 25.5, 'Suite nupcial con jacuzzi y vistas al mar', 0, 'Operativa');
 
 -- Crear la tabla Fotografias
 CREATE TABLE IF NOT EXISTS Fotografias (

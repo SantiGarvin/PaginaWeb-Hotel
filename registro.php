@@ -109,8 +109,6 @@ function procesarRegistro(&$datos, &$errores, &$confirmacion)
                 'nombre' => $row['nombre'] ?? '',
                 'apellidos' => $row['apellidos'] ?? '',
                 'dni' => $row['dni'] ?? '',
-                'fecha_nacimiento' => $row['fecha_nacimiento'] ?? '',
-                'nacionalidad' => $row['nacionalidad'] ?? 'España',
                 'tarjetaC' => $row['num_tarjeta_credito'] ?? '',
                 'correo' => $row['email'] ?? '',
                 'password' => $row['clave'] ?? '',
@@ -124,8 +122,6 @@ function procesarRegistro(&$datos, &$errores, &$confirmacion)
             'nombre' => $_POST['nombre'] ?? '',
             'apellidos' => $_POST['apellidos'] ?? '',
             'dni' => $_POST['dni'] ?? '',
-            'fecha_nacimiento' => $_POST['fecha_nacimiento'] ?? '',
-            'nacionalidad' => $_POST['nacionalidad'] ?? 'España',
             'tarjetaC' => $_POST['tarjetaC'] ?? '',
             'correo' => $_POST['correo'] ?? '',
             'password' => $_POST['password'] ?? '',
@@ -218,17 +214,8 @@ function HTMLregistro($datos = [], $errores = [], $confirmacion = false)
                                 <input type="text" id="dni" name="dni" value="<?= htmlspecialchars($datos['dni']) ?>" $readonly>
                             </label>
 
-                            <label for="fecha-nacimiento">
-                                F. nacimiento:
-                                <input type="date" id="fecha-nacimiento" name="fecha_nacimiento" value="<?= htmlspecialchars($datos['fecha_nacimiento']) ?>" $readonly>
-                            </label>
                         </div>
                         <div class="columna">
-                            <label for="nacionalidad">
-                                Nacionalidad:
-                                <input type="text" id="nacionalidad" name="nacionalidad" value="<?= htmlspecialchars($datos['nacionalidad']) ?>" $readonly>
-                            </label>
-
                             <label for="tarjetaC">
                                 Tarjeta:
                                 <input type="text" id="tarjetaC" name="tarjetaC" value="<?= htmlspecialchars($datos['tarjetaC']) ?>" $readonly>
@@ -290,20 +277,8 @@ function HTMLregistro($datos = [], $errores = [], $confirmacion = false)
                                 <span class="error"><?= htmlspecialchars($errores['dni']) ?></span>
                             <?php endif; ?>
 
-                            <label for="fecha-nacimiento">
-                                F. nacimiento:
-                                <input type="date" id="fecha-nacimiento" name="fecha_nacimiento" value="<?= htmlspecialchars($datos['fecha_nacimiento'] ?? '') ?>" required>
-                            </label>
-                            <?php if (!empty($errores['fecha_nacimiento'])) : ?>
-                                <span class="error"><?= htmlspecialchars($errores['fecha_nacimiento']) ?></span>
-                            <?php endif; ?>
                         </div>
                         <div class="columna">
-                            <label for="nacionalidad">
-                                Nacionalidad:
-                                <input type="text" id="nacionalidad" name="nacionalidad" value="<?= htmlspecialchars($datos['nacionalidad'] ?? 'España') ?>">
-                            </label>
-
                             <label for="tarjetaC">
                                 Tarjeta:
                                 <input type="text" id="tarjetaC" name="tarjetaC" value="<?= htmlspecialchars($datos['tarjetaC'] ?? '') ?>" placeholder="#### #### #### ####" required pattern="[0-9]{16}">

@@ -102,6 +102,17 @@ function obtenerIdHabitacion($numero_habitacion) {
     }
 }
 
+function borrarReservasNoConfirmadas($intervalo) {
+    global $conn;
+
+    $sql = "DELETE FROM Reservas WHERE estado != 'Confirmada' AND marca_tiempo < DATE_SUB(NOW(), INTERVAL $intervalo)";
+    if ($conn->query($sql) === TRUE) {
+        //echo "Reservas no confirmadas borradas correctamente";
+    } else {
+        echo "Error al borrar las reservas no confirmadas: " . $conn->error;
+    }
+}
+
 function InsertarReserva($id_habitacion, $num_personas, $comentarios, $dia_entrada, $dia_salida, $id_usuario) {
     global $conn;
 
@@ -115,9 +126,11 @@ function InsertarReserva($id_habitacion, $num_personas, $comentarios, $dia_entra
     }
 }
 
-
-function HTMLreservar() {
+function HTMLreservar($intervalo = '30 SECOND') {
     global $conn;
+
+    //Cada vez que se carga la página, se borran las reservas no confirmadas
+    borrarReservasNoConfirmadas($intervalo); //Se pasa el intervalo en el que se borran las reservas no confirmadas
 
     // Initialize variables
     $fecha_entrada = '';

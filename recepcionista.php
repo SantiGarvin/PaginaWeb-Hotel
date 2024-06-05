@@ -94,8 +94,13 @@ function handleReceptionistActions()
         $id = isset($_GET['id']) ? $_GET['id'] : (isset($_POST['id_habitacion']) ? $_POST['id_habitacion'] : null);
         return match ($action) {
             'view_clients'          => viewClients(),
+<<<<<<< HEAD
             'edit_client'           => editClientForm($id),
             'delete_client'         => deleteClient($id),
+=======
+            'edit_client'           => editClientForm($_GET['id']),
+            'delete_client'         => deleteClient($_GET['id']),
+>>>>>>> 439d7b1c4b277c89b42b31bd250d67a7bf922c87
             'view_rooms'            => viewRooms(),
             'add_room'              => addRoomForm(),
             'save_room'             => saveRoom(),
@@ -235,6 +240,13 @@ function editClientForm($id)
         </form>';
     } else {
         return "<p>Usuario no encontrado.</p>";
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['edicion'])) {
+        $id = $_POST['id'];
+        echo updateClient($id);
     }
 }
 

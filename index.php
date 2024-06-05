@@ -25,7 +25,6 @@ $tipo_usuario = Session::get('user')['rol'];
 
 $error = '';
 
-
 // Variables de DEBUG y simulación de usuario
 $debug = true;
 
@@ -69,8 +68,9 @@ $estilos = glob('css/*.css'); // Array con los estilos CSS
 $head = HTMLhead("Proyecto Final", $estilos);
 $header = HTMLheader();
 $menu = HTMLnavbar($menu, $opc, 'activo');
-$aside = HTMLaside(); //$totalHabitaciones, $habitacionesLibres, $capacidadTotal, $huespedesAlojados
+$aside = HTMLaside(); 
 $footer = HTMLfooter($autores, ".", "");
+$intervalo_tiempo_borrado_reservas = '30 SECOND';  // Intervalo de tiempo para borrar las reservas antiguas
 
 $cuerpo = match ($opc) {
     0 => HTMLpag_inicio(),
@@ -78,7 +78,7 @@ $cuerpo = match ($opc) {
     2 => HTMLservicios(),
     3 => HTMLregistro(),
     4 => $tipo_usuario === 'Recepcionista' || $tipo_usuario === 'Administrador' ? HTMLreservations() : HTMLpag_error(),
-    5 => $tipo_usuario === 'Cliente' || $tipo_usuario === 'Recepcionista' || $tipo_usuario === 'Administrador' ? HTMLreservar() : HTMLpag_error(),
+    5 => $tipo_usuario === 'Cliente' || $tipo_usuario === 'Recepcionista' || $tipo_usuario === 'Administrador' ? HTMLreservar($intervalo_tiempo_borrado_reservas) : HTMLpag_error(),
     6 => $tipo_usuario === 'Cliente' || $tipo_usuario === 'Recepcionista' || $tipo_usuario === 'Administrador' ? HTMLmicuenta() : HTMLpag_error(),
     7 => $tipo_usuario === 'Administrador' ? HTMLadmin() : HTMLpag_error(),
     default => HTMLpag_error()
