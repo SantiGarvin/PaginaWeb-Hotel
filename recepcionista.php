@@ -104,6 +104,7 @@ function handleReceptionistActions()
             'add_reservation'       => addReservationForm(),
             'edit_reservation'      => editReservationForm($id),
             'delete_reservation'    => deleteReservation($id),
+            'update_reservation'    => updateReservation($id),
             'upload_photos'         => uploadPhotos(),
             'delete_photo'          => deletePhoto(),
             default                 => '<span>Acción no reconocida.</span>',
