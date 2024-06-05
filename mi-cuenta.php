@@ -13,7 +13,7 @@ function HTMLmicuenta()
     $dni = isset(Session::get('user')['dni']) ? Session::get('user')['dni'] : '';
     $email = isset(Session::get('user')['email']) ? Session::get('user')['email'] : '';
     $tarjeta = isset(Session::get('user')['num_tarjeta_credito']) ? Session::get('user')['num_tarjeta_credito'] : '';
-    
+    $password = isset(Session::get('user')['clave']) ? Session::get('user')['clave'] : '';
     
     // Actualizar datos personales/////////////////////
 
@@ -24,6 +24,8 @@ function HTMLmicuenta()
         $email = $_POST['correo'];
         $tarjeta = $_POST['tarjetaC'];
         $password = $_POST['password'];
+        $password2 = $_POST['password2'];
+
 
         $errores = validarDatos($_POST);
         if (count($errores) === 0) {

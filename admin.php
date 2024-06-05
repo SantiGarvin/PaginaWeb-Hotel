@@ -224,8 +224,6 @@ function HTMLtlogs() {
 function HTMLadmin(){
     $usuarios = HTMLtusuarios();
     $habitaciones = HTMLthabitaciones();
-    $fotografias = HTMLtfotografias();
-    $reservas = HTMLtreservas();
     $logs = HTMLtlogs();
     $usuarios_edit = '';
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -249,10 +247,6 @@ function HTMLadmin(){
             $usuarios_edit
             <h3>Habitaciones</h3>
             $habitaciones
-            <h3>Fotografías</h3>
-            $fotografias
-            <h3>Reservas</h3>
-            $reservas
             <h3>Logs</h3>
             $logs
         </section>
