@@ -50,6 +50,7 @@ INSERT INTO `Habitaciones` (`id_habitacion`, `numero`, `capacidad`, `precio_por_
 (302, '302', 4, 25.5, 'Habitación cuádruple con balcón', 0, 'Operativa'),
 (1, 'Suite presidencial', 4, 25.5, 'Suite presidencial con vistas panorámicas', 0, 'Operativa'),
 (2, 'Suite nupcial', 2, 25.5, 'Suite nupcial con jacuzzi y vistas al mar', 0, 'Operativa');
+
 -- Crear la tabla Fotografias
 CREATE TABLE IF NOT EXISTS Fotografias (
     `id_fotografia` int NOT NULL AUTO_INCREMENT,
