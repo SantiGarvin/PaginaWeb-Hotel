@@ -90,21 +90,22 @@ function HTMLreservations() {
 function handleReceptionistActions()
 {
     if (isset($_GET['action'])) {
-        return match ($_GET['action']) {
+        $action = $_GET['action'];
+        $id = isset($_GET['id']) ? $_GET['id'] : (isset($_POST['id_habitacion']) ? $_POST['id_habitacion'] : null);
+        return match ($action) {
             'view_clients'          => viewClients(),
-            'add_client'            => addClientForm(),
-            'edit_client'           => editClientForm($_GET['id']),
-            'delete_client'         => deleteClient($_GET['id']),
+            'edit_client'           => editClientForm($id),
+            'delete_client'         => deleteClient($id),
             'view_rooms'            => viewRooms(),
             'add_room'              => addRoomForm(),
             'save_room'             => saveRoom(),
-            'edit_room'             => editRoomForm($_GET['id']),
-            'update_room'           => updateRoom($_GET['id']),
-            'delete_room'           => deleteRoom($_GET['id']),
+            'edit_room'             => editRoomForm($id),
+            'update_room'           => updateRoom($id),
+            'delete_room'           => deleteRoom($id),
             'view_reservations'     => viewReservations(),
             'add_reservation'       => addReservationForm(),
-            'edit_reservation'      => editReservationForm($_GET['id']),
-            'delete_reservation'    => deleteReservation($_GET['id']),
+            'edit_reservation'      => editReservationForm($id),
+            'delete_reservation'    => deleteReservation($id),
             'upload_photos'         => uploadPhotos(),
             'delete_photo'          => deletePhoto(),
             default                 => '<span>Acción no reconocida.</span>',
@@ -113,6 +114,7 @@ function handleReceptionistActions()
         return '<p>Seleccione una acción del menú.</p>';
     }
 }
+
 
 function uploadPhotos()
 {
@@ -149,6 +151,7 @@ function uploadPhotos()
 
     echo json_encode($response);
 }
+
 
 
 function deletePhoto()
@@ -277,12 +280,28 @@ function viewRooms()
     $result = $conn->query($sql);
     $output = "<h2>Lista de Habitaciones</h2><table><tr><th>ID</th><th>Número</th><th>Capacidad</th><th>Precio por Noche</th><th>Descripción</th><th>Imágenes</th><th>Estado</th><th>Acciones</th></tr>";
     while ($row = $result->fetch_assoc()) {
-        $output .= "<tr><td>{$row['id_habitacion']}</td><td>{$row['numero']}</td><td>{$row['capacidad']}</td><td>{$row['precio_por_noche']}</td><td>{$row['descripcion']}</td><td>{$row['n-imagenes']}</td><td>{$row['estado']}</td>";
-        $output .= "<td><a href='?p=4&action=edit_room&id={$row['id_habitacion']}'>Editar</a> | <a href='?p=4&action=delete_room&id={$row['id_habitacion']}'>Eliminar</a></td></tr>";
+        $output .= "<tr>
+            <td>{$row['id_habitacion']}</td>
+            <td>{$row['numero']}</td>
+            <td>{$row['capacidad']}</td>
+            <td>{$row['precio_por_noche']}</td>
+            <td>{$row['descripcion']}</td>
+            <td>{$row['n-imagenes']}</td>
+            <td>{$row['estado']}</td>
+            <td>
+                <form action='index.php?p=4&action=edit_room' method='post' style='display:inline;'>
+                    <input type='hidden' name='id_habitacion' value='{$row['id_habitacion']}'>
+                    <button type='submit'>Editar</button>
+                </form>
+                <a href='?p=4&action=delete_room&id={$row['id_habitacion']}'>Eliminar</a>
+            </td>
+        </tr>";
     }
     $output .= "</table>";
     return $output;
 }
+
+
 
 function addRoomForm()
 {
@@ -342,8 +361,17 @@ function saveRoom()
 function editRoomForm($id)
 {
     global $conn;
+    if (empty($id)) {
+        return "<p>ID de habitación no proporcionado.</p>";
+    }
+
     $sql = "SELECT * FROM Habitaciones WHERE id_habitacion=$id";
     $result = $conn->query($sql);
+
+    if ($result === false) {
+        return "<p>Error en la consulta: " . $conn->error . "</p>";
+    }
+
     if ($row = $result->fetch_assoc()) {
         // Fetch existing photos
         $photos_sql = "SELECT id_fotografia, nombre_archivo, imagen FROM Fotografias WHERE id_habitacion=$id";
