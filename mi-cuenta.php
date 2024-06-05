@@ -13,7 +13,6 @@ function HTMLmicuenta()
     $dni = isset(Session::get('user')['dni']) ? Session::get('user')['dni'] : '';
     $email = isset(Session::get('user')['email']) ? Session::get('user')['email'] : '';
     $tarjeta = isset(Session::get('user')['num_tarjeta_credito']) ? Session::get('user')['num_tarjeta_credito'] : '';
-    $nacionalidad = isset(Session::get('user')['nacionalidad']) ? Session::get('user')['nacionalidad'] : '';
     
     
     // Actualizar datos personales/////////////////////
@@ -24,15 +23,14 @@ function HTMLmicuenta()
         $dni = $_POST['dni'];
         $email = $_POST['correo'];
         $tarjeta = $_POST['tarjetaC'];
-        $nacionalidad = $_POST['nacionalidad'];
         $password = $_POST['password'];
 
-        // Asegúrate de validar y sanear los datos aquí antes de insertarlos en la base de datos
         $errores = validarDatos($_POST);
         if (count($errores) === 0) {
-            $sql = "UPDATE Usuarios SET nombre = ?, apellidos = ?, dni = ?, email = ?, num_tarjeta_credito = ?, nacionalidad = ?, password = ? WHERE id_usuario = ?";
+            $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+            $sql = "UPDATE Usuarios SET nombre = ?, apellidos = ?, dni = ?, email = ?, num_tarjeta_credito = ?, clave = ? WHERE id_usuario = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssssssi", $nombre, $apellidos, $dni, $email, $tarjeta, $nacionalidad, $password, Session::get('user')['id_usuario']);
+            $stmt->bind_param("ssssssi", $nombre, $apellidos, $dni, $email, $tarjeta, $hashed_password, Session::get('user')['id_usuario']);
             $stmt->execute();
 
             // Actualizar los datos de la sesión
@@ -42,8 +40,8 @@ function HTMLmicuenta()
             $user['dni'] = $dni;
             $user['email'] = $email;
             $user['num_tarjeta_credito'] = $tarjeta;
-            $user['nacionalidad'] = $nacionalidad;
             Session::set('user', $user);
+            echo "<p>Datos actualizados correctamente.</p>";
         } else {
             // Manejar los errores
             foreach ($errores as $campo => $mensaje) {
@@ -129,10 +127,6 @@ function HTMLmicuenta()
 
                         </div>
                         <div class="columna">
-                            <label for="nacionalidad">
-                                Nacionalidad:
-                                <input type="text" id="nacionalidad" name="nacionalidad" value="España">
-                            </label>
                             <label for="dni">
                                 Tarjeta:
                                 <input type="text" id="dni" name="tarjetaC" placeholder="#### #### #### ####" required pattern="[0-9]{12}" value="$tarjeta" >

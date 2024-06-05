@@ -109,7 +109,6 @@ function procesarRegistro(&$datos, &$errores, &$confirmacion)
                 'nombre' => $row['nombre'] ?? '',
                 'apellidos' => $row['apellidos'] ?? '',
                 'dni' => $row['dni'] ?? '',
-                'nacionalidad' => $row['nacionalidad'] ?? 'España',
                 'tarjetaC' => $row['num_tarjeta_credito'] ?? '',
                 'correo' => $row['email'] ?? '',
                 'password' => $row['clave'] ?? '',
@@ -123,7 +122,6 @@ function procesarRegistro(&$datos, &$errores, &$confirmacion)
             'nombre' => $_POST['nombre'] ?? '',
             'apellidos' => $_POST['apellidos'] ?? '',
             'dni' => $_POST['dni'] ?? '',
-            'nacionalidad' => $_POST['nacionalidad'] ?? 'España',
             'tarjetaC' => $_POST['tarjetaC'] ?? '',
             'correo' => $_POST['correo'] ?? '',
             'password' => $_POST['password'] ?? '',
@@ -218,11 +216,6 @@ function HTMLregistro($datos = [], $errores = [], $confirmacion = false)
 
                         </div>
                         <div class="columna">
-                            <label for="nacionalidad">
-                                Nacionalidad:
-                                <input type="text" id="nacionalidad" name="nacionalidad" value="<?= htmlspecialchars($datos['nacionalidad']) ?>" $readonly>
-                            </label>
-
                             <label for="tarjetaC">
                                 Tarjeta:
                                 <input type="text" id="tarjetaC" name="tarjetaC" value="<?= htmlspecialchars($datos['tarjetaC']) ?>" $readonly>
@@ -286,11 +279,6 @@ function HTMLregistro($datos = [], $errores = [], $confirmacion = false)
 
                         </div>
                         <div class="columna">
-                            <label for="nacionalidad">
-                                Nacionalidad:
-                                <input type="text" id="nacionalidad" name="nacionalidad" value="<?= htmlspecialchars($datos['nacionalidad'] ?? 'España') ?>">
-                            </label>
-
                             <label for="tarjetaC">
                                 Tarjeta:
                                 <input type="text" id="tarjetaC" name="tarjetaC" value="<?= htmlspecialchars($datos['tarjetaC'] ?? '') ?>" placeholder="#### #### #### ####" required pattern="[0-9]{16}">
