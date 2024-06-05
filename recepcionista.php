@@ -1,6 +1,7 @@
 <?php
 
-function NHabitacionesLibres() {
+function NHabitacionesLibres()
+{
     global $conn;
 
     $fecha_actual = date('Y-m-d');
@@ -20,7 +21,8 @@ function NHabitacionesLibres() {
     }
 }
 
-function NHabitaciones() {
+function NHabitaciones()
+{
     global $conn;
 
     $sql = "SELECT COUNT(*) AS total FROM Habitaciones";
@@ -32,7 +34,8 @@ function NHabitaciones() {
     }
 }
 
-function CapacidadTotal() {
+function CapacidadTotal()
+{
     global $conn;
 
     $sql = "SELECT SUM(capacidad) AS total FROM Habitaciones";
@@ -44,7 +47,8 @@ function CapacidadTotal() {
     }
 }
 
-function NHuespedesAlojados() {
+function NHuespedesAlojados()
+{
     global $conn;
 
     $sql = "SELECT SUM(num_personas) AS total FROM Reservas WHERE estado = 'Confirmada'";
@@ -58,10 +62,11 @@ function NHuespedesAlojados() {
 
 
 
-function HTMLreservations() {
+function HTMLreservations()
+{
     ob_start();
     $id_rece = Session::get('user')['id_usuario'];
-    ?>
+?>
     <div class="main-content">
         <h1>Gestión de Reservas</h1>
         <ul>
@@ -83,7 +88,7 @@ function HTMLreservations() {
             document.getElementById('addReservationForm').submit();
         }
     </script>
-    <?php
+<?php
     return ob_get_clean();
 }
 
@@ -94,13 +99,8 @@ function handleReceptionistActions()
         $id = isset($_GET['id']) ? $_GET['id'] : (isset($_POST['id_habitacion']) ? $_POST['id_habitacion'] : null);
         return match ($action) {
             'view_clients'          => viewClients(),
-<<<<<<< HEAD
             'edit_client'           => editClientForm($id),
             'delete_client'         => deleteClient($id),
-=======
-            'edit_client'           => editClientForm($_GET['id']),
-            'delete_client'         => deleteClient($_GET['id']),
->>>>>>> 439d7b1c4b277c89b42b31bd250d67a7bf922c87
             'view_rooms'            => viewRooms(),
             'add_room'              => addRoomForm(),
             'save_room'             => saveRoom(),
@@ -124,8 +124,20 @@ function handleReceptionistActions()
 function uploadPhotos()
 {
     global $conn;
-    $id_habitacion = $_POST['id_habitacion'];
+    $id_habitacion = isset($_POST['id_habitacion']) ? $_POST['id_habitacion'] : null;
     $response = ['success' => false, 'message' => '', 'photos' => []];
+
+    if (empty($id_habitacion)) {
+        $response['message'] = "ID de habitación no proporcionado.";
+        echo json_encode($response);
+        return;
+    }
+
+    if (!isset($_FILES['photos'])) {
+        $response['message'] = "No se han subido fotos.";
+        echo json_encode($response);
+        return;
+    }
 
     foreach ($_FILES['photos']['tmp_name'] as $index => $tmpName) {
         if (is_uploaded_file($tmpName)) {
@@ -156,8 +168,6 @@ function uploadPhotos()
 
     echo json_encode($response);
 }
-
-
 
 function deletePhoto()
 {
@@ -422,10 +432,12 @@ function editRoomForm($id)
         <div id="photoList">
             ' . $photos_html . '
         </div>
-        <form id="uploadPhotoForm" enctype="multipart/form-data">
+        <form id="uploadPhotoForm" enctype="multipart/form-data" method="post">
+            <input type="hidden" name="id_habitacion" value="<?= $id_habitacion ?>">
             <input type="file" id="photos" name="photos[]" multiple required>
-            <button type="button" onclick="uploadPhotos(' . $id . ')">Subir Fotos</button>
+            <button type="button" onclick="uploadPhotos(<?= $id_habitacion ?>)">Subir Fotos</button>
         </form>
+    
         <script>
         function deletePhoto(photoId) {
             var xhr = new XMLHttpRequest();
