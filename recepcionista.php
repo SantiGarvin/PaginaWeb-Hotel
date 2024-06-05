@@ -1,6 +1,7 @@
 <?php
 
-function NHabitacionesLibres() {
+function NHabitacionesLibres()
+{
     global $conn;
 
     $fecha_actual = date('Y-m-d');
@@ -20,7 +21,8 @@ function NHabitacionesLibres() {
     }
 }
 
-function NHabitaciones() {
+function NHabitaciones()
+{
     global $conn;
 
     $sql = "SELECT COUNT(*) AS total FROM Habitaciones";
@@ -32,7 +34,8 @@ function NHabitaciones() {
     }
 }
 
-function CapacidadTotal() {
+function CapacidadTotal()
+{
     global $conn;
 
     $sql = "SELECT SUM(capacidad) AS total FROM Habitaciones";
@@ -44,7 +47,8 @@ function CapacidadTotal() {
     }
 }
 
-function NHuespedesAlojados() {
+function NHuespedesAlojados()
+{
     global $conn;
 
     $sql = "SELECT SUM(num_personas) AS total FROM Reservas WHERE estado = 'Confirmada'";
@@ -58,10 +62,11 @@ function NHuespedesAlojados() {
 
 
 
-function HTMLreservations() {
+function HTMLreservations()
+{
     ob_start();
     $id_rece = Session::get('user')['id_usuario'];
-    ?>
+?>
     <div class="main-content">
         <h1>Gestión de Reservas</h1>
         <ul>
@@ -83,27 +88,29 @@ function HTMLreservations() {
             document.getElementById('addReservationForm').submit();
         }
     </script>
-    <?php
+<?php
     return ob_get_clean();
 }
 
 function handleReceptionistActions()
 {
     if (isset($_GET['action'])) {
-        return match ($_GET['action']) {
+        $action = $_GET['action'];
+        $id = isset($_GET['id']) ? $_GET['id'] : (isset($_POST['id_habitacion']) ? $_POST['id_habitacion'] : null);
+        return match ($action) {
             'view_clients'          => viewClients(),
-            'edit_client'           => editClientForm($_GET['id']),
-            'delete_client'         => deleteClient($_GET['id']),
+            'edit_client'           => editClientForm($id),
+            'delete_client'         => deleteClient($id),
             'view_rooms'            => viewRooms(),
             'add_room'              => addRoomForm(),
             'save_room'             => saveRoom(),
-            'edit_room'             => editRoomForm($_GET['id']),
-            'update_room'           => updateRoom($_GET['id']),
-            'delete_room'           => deleteRoom($_GET['id']),
+            'edit_room'             => editRoomForm($id),
+            'update_room'           => updateRoom($id),
+            'delete_room'           => deleteRoom($id),
             'view_reservations'     => viewReservations(),
             'add_reservation'       => addReservationForm(),
-            'edit_reservation'      => editReservationForm($_GET['id']),
-            'delete_reservation'    => deleteReservation($_GET['id']),
+            'edit_reservation'      => editReservationForm($id),
+            'delete_reservation'    => deleteReservation($id),
             'upload_photos'         => uploadPhotos(),
             'delete_photo'          => deletePhoto(),
             default                 => '<span>Acción no reconocida.</span>',
@@ -113,11 +120,24 @@ function handleReceptionistActions()
     }
 }
 
+
 function uploadPhotos()
 {
     global $conn;
-    $id_habitacion = $_POST['id_habitacion'];
+    $id_habitacion = isset($_POST['id_habitacion']) ? $_POST['id_habitacion'] : null;
     $response = ['success' => false, 'message' => '', 'photos' => []];
+
+    if (empty($id_habitacion)) {
+        $response['message'] = "ID de habitación no proporcionado.";
+        echo json_encode($response);
+        return;
+    }
+
+    if (!isset($_FILES['photos'])) {
+        $response['message'] = "No se han subido fotos.";
+        echo json_encode($response);
+        return;
+    }
 
     foreach ($_FILES['photos']['tmp_name'] as $index => $tmpName) {
         if (is_uploaded_file($tmpName)) {
@@ -148,7 +168,6 @@ function uploadPhotos()
 
     echo json_encode($response);
 }
-
 
 function deletePhoto()
 {
@@ -283,12 +302,28 @@ function viewRooms()
     $result = $conn->query($sql);
     $output = "<h2>Lista de Habitaciones</h2><table><tr><th>ID</th><th>Número</th><th>Capacidad</th><th>Precio por Noche</th><th>Descripción</th><th>Imágenes</th><th>Estado</th><th>Acciones</th></tr>";
     while ($row = $result->fetch_assoc()) {
-        $output .= "<tr><td>{$row['id_habitacion']}</td><td>{$row['numero']}</td><td>{$row['capacidad']}</td><td>{$row['precio_por_noche']}</td><td>{$row['descripcion']}</td><td>{$row['n-imagenes']}</td><td>{$row['estado']}</td>";
-        $output .= "<td><a href='?p=4&action=edit_room&id={$row['id_habitacion']}'>Editar</a> | <a href='?p=4&action=delete_room&id={$row['id_habitacion']}'>Eliminar</a></td></tr>";
+        $output .= "<tr>
+            <td>{$row['id_habitacion']}</td>
+            <td>{$row['numero']}</td>
+            <td>{$row['capacidad']}</td>
+            <td>{$row['precio_por_noche']}</td>
+            <td>{$row['descripcion']}</td>
+            <td>{$row['n-imagenes']}</td>
+            <td>{$row['estado']}</td>
+            <td>
+                <form action='index.php?p=4&action=edit_room' method='post' style='display:inline;'>
+                    <input type='hidden' name='id_habitacion' value='{$row['id_habitacion']}'>
+                    <button type='submit'>Editar</button>
+                </form>
+                <a href='?p=4&action=delete_room&id={$row['id_habitacion']}'>Eliminar</a>
+            </td>
+        </tr>";
     }
     $output .= "</table>";
     return $output;
 }
+
+
 
 function addRoomForm()
 {
@@ -348,8 +383,17 @@ function saveRoom()
 function editRoomForm($id)
 {
     global $conn;
+    if (empty($id)) {
+        return "<p>ID de habitación no proporcionado.</p>";
+    }
+
     $sql = "SELECT * FROM Habitaciones WHERE id_habitacion=$id";
     $result = $conn->query($sql);
+
+    if ($result === false) {
+        return "<p>Error en la consulta: " . $conn->error . "</p>";
+    }
+
     if ($row = $result->fetch_assoc()) {
         // Fetch existing photos
         $photos_sql = "SELECT id_fotografia, nombre_archivo, imagen FROM Fotografias WHERE id_habitacion=$id";
@@ -388,10 +432,12 @@ function editRoomForm($id)
         <div id="photoList">
             ' . $photos_html . '
         </div>
-        <form id="uploadPhotoForm" enctype="multipart/form-data">
+        <form id="uploadPhotoForm" enctype="multipart/form-data" method="post">
+            <input type="hidden" name="id_habitacion" value="<?= $id_habitacion ?>">
             <input type="file" id="photos" name="photos[]" multiple required>
-            <button type="button" onclick="uploadPhotos(' . $id . ')">Subir Fotos</button>
+            <button type="button" onclick="uploadPhotos(<?= $id_habitacion ?>)">Subir Fotos</button>
         </form>
+    
         <script>
         function deletePhoto(photoId) {
             var xhr = new XMLHttpRequest();
