@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS Fotografias (
     `nombre_archivo` varchar(255) COLLATE utf8mb4_spanish_ci NOT NULL,
     `imagen` longblob NOT NULL,
     PRIMARY KEY (`id_fotografia`),
-    FOREIGN KEY (`id_habitacion`) REFERENCES `Habitaciones`(`id_habitacion`) ON DELETE CASCADE
+    FOREIGN KEY (`id_habitacion`) REFERENCES `Habitaciones`(`id_habitacion`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- Crear la tabla Reservas
@@ -84,3 +84,7 @@ CREATE TABLE IF NOT EXISTS Logs (
     descripcion TEXT NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario)
 );
+
+ALTER TABLE Logs
+DROP FOREIGN KEY Logs_ibfk_1,
+ADD FOREIGN KEY (id_usuario) REFERENCES Usuarios(id_usuario) ON DELETE CASCADE;
